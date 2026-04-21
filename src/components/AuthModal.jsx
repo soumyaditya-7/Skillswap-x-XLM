@@ -1,39 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Wallet, Loader2, AlertCircle } from 'lucide-react';
+import { isConnected, requestAccess } from '@stellar/freighter-api';
 import { authAPI, setToken } from '../services/api';
 
 const AuthModal = ({ onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState('');
-  const [wallet,  setWallet]  = useState('');
+  const [hasFreighter, setHasFreighter] = useState(true);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!wallet.trim()) {
-      setError('Please enter a wallet address');
+  useEffect(() => {
+    // Check if Freighter is installed when modal opens
+    const checkFreighter = async () => {
+      const connected = await isConnected();
+      setHasFreighter(connected);
+    };
+    checkFreighter();
+  }, []);
+
+  const handleFreighterConnect = async () => {
+    setError('');
+    
+    if (!hasFreighter) {
+      setError('Freighter extension not detected. Please install Freighter to connect.');
       return;
     }
 
     setLoading(true);
-    setError('');
 
     try {
-      // Send wallet address to backend (creates user if new)
-      const data = await authAPI.connectWallet(wallet);
+      // 1. Request access from Freighter Extension
+      const accessResponse = await requestAccess();
+      
+      if (accessResponse.error) {
+        throw new Error(accessResponse.error);
+      }
 
+      // Extract the wallet address
+      const publicKey = accessResponse.address || accessResponse; // Depending on API version
+      
+      if (!publicKey || typeof publicKey !== 'string') {
+        throw new Error('Failed to retrieve public key from Freighter');
+      }
+
+      // 2. Authenticate with backend using the public key
+      const data = await authAPI.connectWallet(publicKey);
+
+      // 3. Store token and update app state
       setToken(data.token);
       onSuccess(data.user);
+      
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setError(err.message || 'Connection rejected or failed.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const simulateFreighter = () => {
-    // Mocking a standard Stellar address
-    setWallet('GBCV4...' + Math.random().toString(36).substring(2, 8).toUpperCase());
   };
 
   return (
@@ -54,7 +76,7 @@ const AuthModal = ({ onClose, onSuccess }) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 20 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="relative w-full max-w-sm glass-card p-8"
+          className="relative w-full max-w-sm glass-card p-8 text-center"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close */}
@@ -66,69 +88,50 @@ const AuthModal = ({ onClose, onSuccess }) => {
           </button>
 
           {/* Logo / Title */}
-          <div className="text-center mb-8">
-            <div className="mx-auto w-12 h-12 bg-brand-600/20 text-brand-400 rounded-full flex items-center justify-center mb-4">
-              <Wallet size={24} />
+          <div className="mb-8 mt-2">
+            <div className="mx-auto w-16 h-16 bg-brand-600/20 text-brand-400 rounded-full flex items-center justify-center mb-5">
+              <Wallet size={32} />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">
-              Connect Wallet
+              Web3 Authentication
             </h2>
             <p className="text-slate-400 text-sm">
-              Link your Stellar wallet to access Skill Swap.
+              Connect your Freighter wallet to securely log into Skill Swap.
             </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Enter Stellar address (G...)"
-                value={wallet}
-                onChange={(e) => { setError(''); setWallet(e.target.value); }}
-                className="w-full bg-surface-800 border border-white/10 rounded-xl px-4 py-3
-                           text-sm text-white placeholder-slate-500 font-mono
-                           focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/40
-                           transition-all duration-200"
-              />
-            </div>
-
-            {/* Error message */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 bg-red-500/10 border border-red-500/20
-                           rounded-xl px-4 py-3 text-sm text-red-400"
-              >
-                <AlertCircle size={16} />
-                {error}
-              </motion.div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full justify-center py-3 text-sm font-semibold mt-2
-                         disabled:opacity-60 disabled:cursor-not-allowed"
+          {/* Error message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 bg-red-500/10 border border-red-500/20
+                         rounded-xl px-4 py-3 text-sm text-red-400 mb-4 text-left"
             >
-              {loading
-                ? <><Loader2 size={16} className="animate-spin" /> Connecting…</>
-                : 'Connect'
-              }
-            </button>
-            
-            {/* Mock Freighter Helper */}
-            <div className="mt-4 pt-4 border-t border-white/5 text-center">
-              <button 
-                type="button" 
-                onClick={simulateFreighter}
-                className="text-xs text-brand-400 hover:text-brand-300 font-medium transition-colors"
-              >
-                Simulate Freighter Extension
-              </button>
-            </div>
-          </form>
+              <AlertCircle size={16} className="shrink-0" />
+              <span className="leading-snug">{error}</span>
+            </motion.div>
+          )}
+
+          {/* Connect Button */}
+          <button
+            onClick={handleFreighterConnect}
+            disabled={loading}
+            className="btn-primary w-full justify-center py-4 text-base font-semibold
+                       disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(99,102,241,0.3)]"
+          >
+            {loading ? (
+              <><Loader2 size={18} className="animate-spin" /> Connecting Freighter…</>
+            ) : (
+              <><Wallet size={18} /> Connect Freighter Wallet</>
+            )}
+          </button>
+          
+          {!hasFreighter && !error && (
+             <p className="text-xs text-amber-400/80 mt-4 font-medium">
+               ⚠️ Freighter extension not detected.
+             </p>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
