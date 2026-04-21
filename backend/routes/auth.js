@@ -6,7 +6,7 @@ const db      = require('../db');
 const signToken = (user) =>
   jwt.sign(
     { id: user.id, username: user.username, wallet_address: user.wallet_address },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || 'skillswap_super_secret_jwt_key_2024',
     { expiresIn: '7d' }
   );
 

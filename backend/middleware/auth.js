@@ -10,7 +10,7 @@ const authMiddleware = (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET || 'skillswap_super_secret_jwt_key_2024');
     req.user = payload; // { id, username, email }
     next();
   } catch (err) {
