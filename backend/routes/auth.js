@@ -19,6 +19,11 @@ router.post('/wallet', async (req, res, next) => {
   }
 
   try {
+    // Check if DATABASE_URL is just the placeholder or missing
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('host:port')) {
+      return res.status(500).json({ error: 'DATABASE_URL is missing or invalid. You MUST create a Supabase/Neon database and add the connection string to your Vercel Environment Variables.' });
+    }
+
     // Check if user exists
     const result = await db.query('SELECT * FROM users WHERE wallet_address = $1', [wallet_address]);
     let user = result.rows[0];
