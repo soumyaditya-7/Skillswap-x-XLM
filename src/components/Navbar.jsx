@@ -1,29 +1,28 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Menu, X, Wallet } from 'lucide-react';
+import { Zap, Menu, X, Wallet, LogOut, User } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Exchange',     to: '/exchange'  },
-  { label: 'Learn',        to: '/learn'     },
-  { label: 'Teams',        to: '/teams'     },
-  { label: 'Profile',      to: '/profile'   },
+  { label: 'Exchange', to: '/exchange' },
+  { label: 'Learn',    to: '/learn'    },
+  { label: 'Teams',    to: '/teams'    },
+  { label: 'Profile',  to: '/profile'  },
 ];
 
-const Navbar = ({ wallet, setWallet }) => {
+// Truncate a long wallet address for display
+const shortAddr = (addr) =>
+  addr && addr.length > 12 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
+
+const Navbar = ({ user, onConnectClick, onLogout }) => {
   const [open, setOpen] = useState(false);
-  const location  = useLocation();
+  const location = useLocation();
   const navigate  = useNavigate();
 
-  const mockConnect = () => {
-    const addr = 'GD3K...X7F2';
-    setWallet(addr);
-    navigate('/dashboard');
-  };
-
-  const disconnect = () => {
-    setWallet(null);
+  const handleLogout = () => {
+    onLogout();
     navigate('/');
+    setOpen(false);
   };
 
   return (
@@ -44,7 +43,7 @@ const Navbar = ({ wallet, setWallet }) => {
         </span>
       </Link>
 
-      {/* Desktop links */}
+      {/* Desktop nav links */}
       <div className="hidden md:flex items-center gap-1">
         {navLinks.map(({ label, to }) => (
           <Link
@@ -60,19 +59,41 @@ const Navbar = ({ wallet, setWallet }) => {
         ))}
       </div>
 
-      {/* Wallet button */}
+      {/* Desktop auth area */}
       <div className="hidden md:flex items-center gap-3">
-        {wallet ? (
+        {user ? (
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-surface-700 border border-brand-500/30 text-brand-400 text-sm font-mono">
-              <Wallet size={14} /> {wallet}
-            </span>
-            <button onClick={disconnect} className="btn-outline text-xs px-4 py-2">
-              Disconnect
+            {/* Username badge */}
+            <Link
+              to="/profile"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl
+                         bg-surface-700 border border-brand-500/30
+                         text-brand-400 text-sm font-medium hover:border-brand-400/50 transition-colors"
+            >
+              <User size={14} />
+              {user.username}
+            </Link>
+
+            {/* Wallet address (if set) */}
+            {user.wallet_address && (
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                               bg-surface-800 border border-white/10
+                               text-slate-400 text-xs font-mono">
+                <Wallet size={12} />
+                {shortAddr(user.wallet_address)}
+              </span>
+            )}
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className="btn-outline text-xs px-4 py-2 flex items-center gap-1.5"
+            >
+              <LogOut size={13} /> Sign out
             </button>
           </div>
         ) : (
-          <button onClick={mockConnect} className="btn-primary">
+          <button onClick={onConnectClick} className="btn-primary">
             <Wallet size={15} /> Connect Wallet
           </button>
         )}
@@ -83,28 +104,34 @@ const Navbar = ({ wallet, setWallet }) => {
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      {/* Mobile menu */}
+      {/* Mobile dropdown */}
       {open && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute top-16 inset-x-0 bg-surface-800/95 backdrop-blur-lg border-b border-white/5
-                     flex flex-col gap-1 p-4 md:hidden"
+          className="absolute top-16 inset-x-0 bg-surface-800/95 backdrop-blur-lg
+                     border-b border-white/5 flex flex-col gap-1 p-4 md:hidden"
         >
           {navLinks.map(({ label, to }) => (
             <Link
               key={to}
               to={to}
               onClick={() => setOpen(false)}
-              className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+              className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300
+                         hover:text-white hover:bg-white/5 transition-colors"
             >
               {label}
             </Link>
           ))}
           <div className="pt-2 border-t border-white/5">
-            {wallet
-              ? <button onClick={disconnect} className="btn-outline w-full justify-center text-xs">Disconnect</button>
-              : <button onClick={mockConnect} className="btn-primary w-full justify-center">Connect Wallet</button>
+            {user
+              ? <button onClick={handleLogout} className="btn-outline w-full justify-center text-xs flex items-center gap-2">
+                  <LogOut size={13} /> Sign out ({user.username})
+                </button>
+              : <button onClick={() => { onConnectClick(); setOpen(false); }}
+                        className="btn-primary w-full justify-center">
+                  <Wallet size={15} /> Connect Wallet
+                </button>
             }
           </div>
         </motion.div>

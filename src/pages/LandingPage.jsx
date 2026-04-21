@@ -19,12 +19,11 @@ const item = {
   show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } },
 };
 
-const LandingPage = ({ setWallet }) => {
+const LandingPage = ({ onConnectClick }) => {
   const navigate = useNavigate();
 
   const handleConnect = () => {
-    setWallet('GD3K...X7F2');
-    navigate('/dashboard');
+    onConnectClick();
   };
 
   return (
