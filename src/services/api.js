@@ -3,7 +3,7 @@
 // All calls go to http://localhost:5000/api
 // ─────────────────────────────────────────────────────────────
 
-const BASE = 'http://localhost:5000/api';
+const BASE = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
 
 // ── Token helpers ─────────────────────────────────────────────
 export const getToken  = ()        => localStorage.getItem('ss_token');
