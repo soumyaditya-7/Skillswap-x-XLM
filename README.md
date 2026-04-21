@@ -1,6 +1,6 @@
 # ⚡ Skill Swap - Decentralized Skill Exchange & Learning Marketplace
 
-![Skill Swap Banner](https://via.placeholder.com/1200x400.png?text=Skill+Swap+-+Learn,+Earn,+Grow)
+![Skill Swap Banner](https://placehold.co/1200x400/1e1e2f/818cf8?text=Skill+Swap+-+Learn,+Earn,+Grow)
 
 Skill Swap is a Web3 platform built on the Stellar network where users can exchange skills peer-to-peer, learn from professionals using XLM, and form project teams with stake-based commitments.
 
