@@ -37,6 +37,30 @@ db.exec(`
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(rater_id, ratee_id)
   );
+
+  CREATE TABLE IF NOT EXISTS exchanges (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    skill_offer   TEXT    NOT NULL,
+    skill_want    TEXT    NOT NULL,
+    description   TEXT    DEFAULT '',
+    level_offer   TEXT    DEFAULT 'intermediate',
+    level_want    TEXT    DEFAULT 'intermediate',
+    status        TEXT    NOT NULL DEFAULT 'open'
+                          CHECK(status IN ('open','matched','closed')),
+    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS exchange_requests (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    exchange_id  INTEGER NOT NULL REFERENCES exchanges(id) ON DELETE CASCADE,
+    requester_id INTEGER NOT NULL REFERENCES users(id),
+    message      TEXT    DEFAULT '',
+    status       TEXT    NOT NULL DEFAULT 'pending'
+                         CHECK(status IN ('pending','accepted','rejected')),
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(exchange_id, requester_id)
+  );
 `);
 
 module.exports = db;

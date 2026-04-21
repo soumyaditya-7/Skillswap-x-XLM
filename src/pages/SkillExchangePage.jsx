@@ -1,29 +1,82 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Users, X, CheckCircle } from 'lucide-react';
+import { Plus, Search, Users, X, CheckCircle, Loader2 } from 'lucide-react';
 import BgBlobs from '../components/BgBlobs';
+import { exchangesAPI } from '../services/api';
 
-const mockPosts = [
-  { id: 1, user: 'Alex R.',    offer: 'React',      want: 'UI Design',   level: 'Intermediate', avatar: 'AR' },
-  { id: 2, user: 'Priya M.',   offer: 'Python',     want: 'Blockchain',  level: 'Beginner',     avatar: 'PM' },
-  { id: 3, user: 'James K.',   offer: 'Figma',      want: 'Node.js',     level: 'Advanced',     avatar: 'JK' },
-  { id: 4, user: 'Sara L.',    offer: 'Marketing',  want: 'Data Science',level: 'Intermediate', avatar: 'SL' },
-  { id: 5, user: 'Dev P.',     offer: 'Solidity',   want: 'React',       level: 'Advanced',     avatar: 'DP' },
-  { id: 6, user: 'Nina T.',    offer: 'Data Science',want: 'Marketing',  level: 'Beginner',     avatar: 'NT' },
-];
+const levelColor = { 
+  beginner: 'text-emerald-400 bg-emerald-400/10', 
+  intermediate: 'text-amber-400 bg-amber-400/10', 
+  advanced: 'text-rose-400 bg-rose-400/10' 
+};
 
-const levelColor = { Beginner: 'text-emerald-400 bg-emerald-400/10', Intermediate: 'text-amber-400 bg-amber-400/10', Advanced: 'text-rose-400 bg-rose-400/10' };
-
-const SkillExchangePage = () => {
+const SkillExchangePage = ({ user, onConnectClick }) => {
   const [showForm, setShowForm]       = useState(false);
   const [search, setSearch]           = useState('');
+  const [posts, setPosts]             = useState([]);
+  const [loading, setLoading]         = useState(true);
   const [matched, setMatched]         = useState(null);
-  const [form, setForm]               = useState({ offer: '', want: '', level: 'Beginner' });
+  
+  const [form, setForm]               = useState({ offer: '', want: '', level_offer: 'intermediate', level_want: 'intermediate', description: '' });
+  const [submitting, setSubmitting]   = useState(false);
 
-  const filtered = mockPosts.filter(p =>
-    p.offer.toLowerCase().includes(search.toLowerCase()) ||
-    p.want.toLowerCase().includes(search.toLowerCase())
-  );
+  // Fetch posts
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      // Wait for any typing to finish, or just fetch all
+      const data = await exchangesAPI.list(search ? { q: search } : {});
+      setPosts(data.exchanges);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Simple debounce for search
+    const timer = setTimeout(() => {
+      fetchPosts();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const handleCreatePost = async () => {
+    if (!user) return onConnectClick();
+    if (!form.offer || !form.want) return;
+
+    try {
+      setSubmitting(true);
+      await exchangesAPI.create({
+        skill_offer: form.offer,
+        skill_want: form.want,
+        level_offer: form.level_offer,
+        level_want: form.level_want,
+        description: form.description
+      });
+      
+      setShowForm(false);
+      setForm({ offer: '', want: '', level_offer: 'intermediate', level_want: 'intermediate', description: '' });
+      setMatched(form.want);
+      fetchPosts(); // Refresh list
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleRequestSwap = async (postId) => {
+    if (!user) return onConnectClick();
+    
+    try {
+      await exchangesAPI.sendRequest(postId, 'I would like to swap skills!');
+      alert('Match request sent!');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   return (
     <div className="page-wrapper">
@@ -37,11 +90,11 @@ const SkillExchangePage = () => {
             <p className="section-subtitle">Find a match — swap skills, grow together.</p>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+            <button 
+              onClick={() => user ? setShowForm(!showForm) : onConnectClick()} 
+              className="btn-primary"
+            >
               <Plus size={16} /> Create Post
-            </button>
-            <button className="btn-outline">
-              <Users size={16} /> Create Team
             </button>
           </div>
         </motion.div>
@@ -59,31 +112,56 @@ const SkillExchangePage = () => {
                 <h2 className="font-semibold text-white">New Skill Post</h2>
                 <button onClick={() => setShowForm(false)} className="text-slate-500 hover:text-white"><X size={18} /></button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[['I Offer', 'offer', 'e.g. React'], ['I Want', 'want', 'e.g. Design']].map(([label, key, ph]) => (
-                  <div key={key}>
-                    <label className="block text-xs text-slate-400 mb-1.5 font-medium">{label}</label>
-                    <input
-                      value={form[key]}
-                      onChange={e => setForm({ ...form, [key]: e.target.value })}
-                      placeholder={ph}
-                      className="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-500 transition-colors"
-                    />
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1.5 font-medium">Level</label>
+                  <label className="block text-xs text-slate-400 mb-1.5 font-medium">I Offer</label>
+                  <input
+                    value={form.offer}
+                    onChange={e => setForm({ ...form, offer: e.target.value })}
+                    placeholder="e.g. React"
+                    className="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-500 transition-colors mb-3"
+                  />
                   <select
-                    value={form.level}
-                    onChange={e => setForm({ ...form, level: e.target.value })}
+                    value={form.level_offer}
+                    onChange={e => setForm({ ...form, level_offer: e.target.value })}
                     className="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-brand-500 transition-colors"
                   >
-                    {['Beginner', 'Intermediate', 'Advanced'].map(l => <option key={l}>{l}</option>)}
+                    {['beginner', 'intermediate', 'advanced'].map(l => <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1.5 font-medium">I Want</label>
+                  <input
+                    value={form.want}
+                    onChange={e => setForm({ ...form, want: e.target.value })}
+                    placeholder="e.g. Design"
+                    className="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-500 transition-colors mb-3"
+                  />
+                  <select
+                    value={form.level_want}
+                    onChange={e => setForm({ ...form, level_want: e.target.value })}
+                    className="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-brand-500 transition-colors"
+                  >
+                    {['beginner', 'intermediate', 'advanced'].map(l => <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>)}
                   </select>
                 </div>
               </div>
-              <button className="btn-primary mt-5" onClick={() => { setShowForm(false); setMatched(form.want); }}>
-                <CheckCircle size={16} /> Post & Find Matches
+              <div className="mt-4">
+                  <label className="block text-xs text-slate-400 mb-1.5 font-medium">Description (Optional)</label>
+                  <input
+                    value={form.description}
+                    onChange={e => setForm({ ...form, description: e.target.value })}
+                    placeholder="Any specific details..."
+                    className="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-brand-500 transition-colors"
+                  />
+              </div>
+              <button 
+                disabled={submitting || !form.offer || !form.want}
+                className="btn-primary mt-5 disabled:opacity-50" 
+                onClick={handleCreatePost}
+              >
+                {submitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                Post & Find Matches
               </button>
             </motion.div>
           )}
@@ -112,38 +190,67 @@ const SkillExchangePage = () => {
         </div>
 
         {/* Cards grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          {filtered.map((post, i) => (
-            <motion.div
-              key={post.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07 }}
-              whileHover={{ y: -4, boxShadow: '0 0 30px #6366f120' }}
-              className="glass-card p-5"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold">
-                  {post.avatar}
+        {loading ? (
+          <div className="flex justify-center py-20"><Loader2 className="animate-spin text-brand-500" size={32} /></div>
+        ) : posts.length === 0 ? (
+          <div className="text-center py-20 text-slate-400">No open exchanges found. Be the first to post!</div>
+        ) : (
+          <motion.div
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            {posts.map((post, i) => (
+              <motion.div
+                key={post.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.07 }}
+                whileHover={{ y: -4, boxShadow: '0 0 30px #6366f120' }}
+                className="glass-card p-5"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  {post.poster.avatar_url ? (
+                    <img src={post.poster.avatar_url} alt={post.poster.username} className="w-10 h-10 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold uppercase">
+                      {post.poster.username.slice(0, 2)}
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-semibold text-white">{post.poster.username}</p>
+                    <span className="text-xs text-slate-400">{new Date(post.created_at).toLocaleDateString()}</span>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{post.user}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${levelColor[post.level]}`}>{post.level}</span>
+                
+                <div className="mb-4 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 w-12">Offers:</span>
+                    <span className="tag">{post.skill_offer}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${levelColor[post.level_offer] || levelColor.intermediate}`}>{post.level_offer}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 w-12">Wants:</span>
+                    <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-violet-600/20 text-violet-400 border border-violet-500/30">{post.skill_want}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${levelColor[post.level_want] || levelColor.intermediate}`}>{post.level_want}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="tag">Offers: {post.offer}</span>
-                <span className="text-slate-600">→</span>
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-violet-600/20 text-violet-400 border border-violet-500/30">Wants: {post.want}</span>
-              </div>
-              <button className="btn-primary w-full justify-center text-xs py-2">Request Swap</button>
-            </motion.div>
-          ))}
-        </motion.div>
+
+                {post.description && (
+                  <p className="text-sm text-slate-400 mb-4 line-clamp-2">{post.description}</p>
+                )}
+
+                <button 
+                  className="btn-primary w-full justify-center text-xs py-2 disabled:opacity-50"
+                  onClick={() => handleRequestSwap(post.id)}
+                  disabled={user && user.id === post.user_id}
+                >
+                  {user && user.id === post.user_id ? 'Your Post' : 'Request Swap'}
+                </button>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </main>
     </div>
   );

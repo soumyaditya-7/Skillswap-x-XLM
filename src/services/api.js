@@ -56,5 +56,42 @@ export const usersAPI = {
   listUsers:    (skill)  => request(skill ? `/users?skill=${encodeURIComponent(skill)}` : '/users'),
 };
 
+// ── Exchanges ─────────────────────────────────────────────────
+export const exchangesAPI = {
+  /** List all open exchanges (optional query: q, offer, want) */
+  list:    (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return request(qs ? `/exchanges?${qs}` : '/exchanges');
+  },
+
+  /** Create a new exchange listing */
+  create:  (body)        => request('/exchanges', { method: 'POST', body: JSON.stringify(body) }),
+
+  /** Get a single exchange post with its requests */
+  get:     (id)          => request(`/exchanges/${id}`),
+
+  /** Delete your own exchange post */
+  delete:  (id)          => request(`/exchanges/${id}`, { method: 'DELETE' }),
+
+  /** Change status of your own post (open | closed) */
+  setStatus: (id, status) => request(`/exchanges/${id}/status`, {
+    method: 'PATCH', body: JSON.stringify({ status }),
+  }),
+
+  /** Send a match request to an exchange post */
+  sendRequest: (id, message) => request(`/exchanges/${id}/request`, {
+    method: 'POST', body: JSON.stringify({ message }),
+  }),
+
+  /** Accept or reject a request on your post (decision: accepted|rejected) */
+  respondToRequest: (exchangeId, reqId, decision) =>
+    request(`/exchanges/${exchangeId}/request/${reqId}`, {
+      method: 'PATCH', body: JSON.stringify({ decision }),
+    }),
+
+  /** Get your own exchange posts */
+  mine: () => request('/exchanges/user/mine'),
+};
+
 // ── Health ────────────────────────────────────────────────────
 export const healthCheck = () => request('/health');
