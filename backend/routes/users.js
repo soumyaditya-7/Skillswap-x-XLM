@@ -1,150 +1,172 @@
-const router     = require('express').Router();
-const db         = require('../db');
-const authMiddleware = require('../middleware/auth');
+const router = require('express').Router();
+const db     = require('../db');
+const auth   = require('../middleware/auth');
 
-// ── GET /api/users/me  (protected) ───────────────────────────
-router.get('/me', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
-  if (!user) return res.status(404).json({ error: 'User not found' });
+// ── GET /api/users/me ─────────────────────────────────────────
+router.get('/me', auth, async (req, res, next) => {
+  try {
+    const result = await db.query(
+      'SELECT id, username, wallet_address, avatar_url, bio, xlm_rate FROM users WHERE id = $1',
+      [req.user.id]
+    );
+    const user = result.rows[0];
 
-  const skills = db.prepare('SELECT * FROM skills WHERE user_id = ?').all(user.id);
-  const ratingsReceived = db.prepare(
-    'SELECT AVG(score) as avg_score, COUNT(*) as count FROM ratings WHERE ratee_id = ?'
-  ).get(user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-  res.json({
-    id:             user.id,
-    username:       user.username,
-    email:          user.email,
-    wallet_address: user.wallet_address,
-    avatar_url:     user.avatar_url,
-    bio:            user.bio,
-    xlm_rate:       user.xlm_rate,
-    created_at:     user.created_at,
-    skills_offered: skills.filter(s => s.type === 'offer'),
-    skills_wanted:  skills.filter(s => s.type === 'want'),
-    rating: {
-      avg:   ratingsReceived.avg_score ? parseFloat(ratingsReceived.avg_score.toFixed(1)) : null,
-      count: ratingsReceived.count,
-    },
-  });
-});
+    const skillsRes = await db.query(
+      'SELECT id, skill_name, level, type FROM skills WHERE user_id = $1',
+      [user.id]
+    );
+    user.skills = skillsRes.rows;
 
-// ── PATCH /api/users/me  (protected) — update profile ────────
-router.patch('/me', authMiddleware, (req, res) => {
-  const { bio, wallet_address, xlm_rate, avatar_url } = req.body;
+    const ratingsRes = await db.query(
+      `SELECT r.score, r.comment, u.username as rater_name
+       FROM ratings r
+       JOIN users u ON r.rater_id = u.id
+       WHERE r.target_id = $1`,
+      [user.id]
+    );
+    user.ratings = ratingsRes.rows;
 
-  db.prepare(
-    `UPDATE users
-     SET bio = COALESCE(?, bio),
-         wallet_address = COALESCE(?, wallet_address),
-         xlm_rate = COALESCE(?, xlm_rate),
-         avatar_url = COALESCE(?, avatar_url)
-     WHERE id = ?`
-  ).run(bio, wallet_address, xlm_rate, avatar_url, req.user.id);
-
-  const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
-  res.json({ message: 'Profile updated', user: updated });
-});
-
-// ── POST /api/users/me/skills  — add a skill ─────────────────
-router.post('/me/skills', authMiddleware, (req, res) => {
-  const { name, type, level } = req.body;
-
-  if (!name || !['offer', 'want'].includes(type)) {
-    return res.status(400).json({ error: 'name and type (offer|want) are required' });
+    res.json(user);
+  } catch (error) {
+    next(error);
   }
-
-  const { lastInsertRowid } = db.prepare(
-    'INSERT INTO skills (user_id, name, type, level) VALUES (?, ?, ?, ?)'
-  ).run(req.user.id, name.trim(), type, level || 'intermediate');
-
-  const skill = db.prepare('SELECT * FROM skills WHERE id = ?').get(lastInsertRowid);
-  res.status(201).json({ message: 'Skill added', skill });
 });
 
-// ── DELETE /api/users/me/skills/:id  — remove a skill ────────
-router.delete('/me/skills/:id', authMiddleware, (req, res) => {
-  const skill = db.prepare(
-    'SELECT * FROM skills WHERE id = ? AND user_id = ?'
-  ).get(req.params.id, req.user.id);
-
-  if (!skill) return res.status(404).json({ error: 'Skill not found or not yours' });
-
-  db.prepare('DELETE FROM skills WHERE id = ?').run(req.params.id);
-  res.json({ message: 'Skill removed' });
+// ── PATCH /api/users/me ───────────────────────────────────────
+router.patch('/me', auth, async (req, res, next) => {
+  const { bio, avatar_url, xlm_rate } = req.body;
+  try {
+    const result = await db.query(
+      `UPDATE users 
+       SET bio = COALESCE($1, bio),
+           avatar_url = COALESCE($2, avatar_url),
+           xlm_rate = COALESCE($3, xlm_rate)
+       WHERE id = $4
+       RETURNING id, username, wallet_address, avatar_url, bio, xlm_rate`,
+      [bio, avatar_url, xlm_rate, req.user.id]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
 });
 
-// ── GET /api/users/:id  — public profile ─────────────────────
-router.get('/:id', (req, res) => {
-  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.params.id);
-  if (!user) return res.status(404).json({ error: 'User not found' });
-
-  const skills = db.prepare('SELECT * FROM skills WHERE user_id = ?').all(user.id);
-  const ratingsReceived = db.prepare(
-    'SELECT AVG(score) as avg_score, COUNT(*) as count FROM ratings WHERE ratee_id = ?'
-  ).get(user.id);
-
-  res.json({
-    id:             user.id,
-    username:       user.username,
-    wallet_address: user.wallet_address,
-    avatar_url:     user.avatar_url,
-    bio:            user.bio,
-    xlm_rate:       user.xlm_rate,
-    created_at:     user.created_at,
-    skills_offered: skills.filter(s => s.type === 'offer'),
-    skills_wanted:  skills.filter(s => s.type === 'want'),
-    rating: {
-      avg:   ratingsReceived.avg_score ? parseFloat(ratingsReceived.avg_score.toFixed(1)) : null,
-      count: ratingsReceived.count,
-    },
-  });
+// ── POST /api/users/me/skills ─────────────────────────────────
+router.post('/me/skills', auth, async (req, res, next) => {
+  const { skill_name, level, type } = req.body;
+  if (!skill_name || !level || !type) {
+    return res.status(400).json({ error: 'skill_name, level, type required' });
+  }
+  try {
+    const result = await db.query(
+      `INSERT INTO skills (user_id, skill_name, level, type)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, skill_name, level, type`,
+      [req.user.id, skill_name, level, type]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    next(error);
+  }
 });
 
-// ── POST /api/users/:id/rate  (protected) ────────────────────
-router.post('/:id/rate', authMiddleware, (req, res) => {
-  const ratee_id = parseInt(req.params.id);
+// ── DELETE /api/users/me/skills/:id ───────────────────────────
+router.delete('/me/skills/:id', auth, async (req, res, next) => {
+  try {
+    const result = await db.query(
+      'DELETE FROM skills WHERE id = $1 AND user_id = $2 RETURNING id',
+      [req.params.id, req.user.id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Skill not found or unauthorized' });
+    }
+    res.json({ message: 'Skill deleted' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ── GET /api/users/:id ────────────────────────────────────────
+router.get('/:id', async (req, res, next) => {
+  try {
+    const result = await db.query(
+      'SELECT id, username, avatar_url, bio, xlm_rate FROM users WHERE id = $1',
+      [req.params.id]
+    );
+    const user = result.rows[0];
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const skillsRes = await db.query(
+      'SELECT id, skill_name, level, type FROM skills WHERE user_id = $1',
+      [user.id]
+    );
+    user.skills = skillsRes.rows;
+
+    const ratingsRes = await db.query(
+      `SELECT r.score, r.comment, u.username as rater_name
+       FROM ratings r
+       JOIN users u ON r.rater_id = u.id
+       WHERE r.target_id = $1`,
+      [user.id]
+    );
+    user.ratings = ratingsRes.rows;
+
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ── POST /api/users/:id/rate ──────────────────────────────────
+router.post('/:id/rate', auth, async (req, res, next) => {
+  const target_id = parseInt(req.params.id, 10);
   const { score, comment } = req.body;
 
-  if (ratee_id === req.user.id) {
-    return res.status(400).json({ error: 'You cannot rate yourself' });
+  if (target_id === req.user.id) {
+    return res.status(400).json({ error: "Cannot rate yourself" });
   }
   if (!score || score < 1 || score > 5) {
-    return res.status(400).json({ error: 'score must be between 1 and 5' });
+    return res.status(400).json({ error: "Score must be 1-5" });
   }
 
   try {
-    db.prepare(
-      `INSERT INTO ratings (rater_id, ratee_id, score, comment) VALUES (?, ?, ?, ?)
-       ON CONFLICT(rater_id, ratee_id) DO UPDATE SET score = excluded.score, comment = excluded.comment`
-    ).run(req.user.id, ratee_id, score, comment || null);
-
-    res.json({ message: 'Rating submitted' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to submit rating' });
+    const result = await db.query(
+      `INSERT INTO ratings (rater_id, target_id, score, comment)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [req.user.id, target_id, score, comment]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    next(error);
   }
 });
 
-// ── GET /api/users  — list all users (for matching) ──────────
-router.get('/', (req, res) => {
+// ── GET /api/users ────────────────────────────────────────────
+router.get('/', async (req, res, next) => {
   const { skill } = req.query;
-
-  let users;
-  if (skill) {
-    users = db.prepare(
-      `SELECT DISTINCT u.id, u.username, u.avatar_url, u.bio, u.xlm_rate, u.wallet_address
-       FROM users u
-       JOIN skills s ON s.user_id = u.id
-       WHERE s.type = 'offer' AND LOWER(s.name) LIKE LOWER(?)`
-    ).all(`%${skill}%`);
-  } else {
-    users = db.prepare(
-      'SELECT id, username, avatar_url, bio, xlm_rate, wallet_address FROM users'
-    ).all();
+  try {
+    if (skill) {
+      const result = await db.query(
+        `SELECT DISTINCT u.id, u.username, u.avatar_url, u.bio, u.xlm_rate
+         FROM users u
+         JOIN skills s ON u.id = s.user_id
+         WHERE s.skill_name ILIKE $1`,
+        [`%${skill}%`]
+      );
+      res.json(result.rows);
+    } else {
+      const result = await db.query(
+        'SELECT id, username, avatar_url, bio, xlm_rate FROM users ORDER BY created_at DESC LIMIT 50'
+      );
+      res.json(result.rows);
+    }
+  } catch (error) {
+    next(error);
   }
-
-  res.json({ users });
 });
 
 module.exports = router;

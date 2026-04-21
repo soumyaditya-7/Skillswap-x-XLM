@@ -1,64 +1,81 @@
-const Database = require('better-sqlite3');
-const path = require('path');
+const { Pool } = require('pg');
+require('dotenv').config();
 
-const db = new Database(path.join(__dirname, 'skillswap.db'));
+// Initialize the connection pool using the DATABASE_URL from .env
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
-// Enable WAL mode for better performance
-db.pragma('journal_mode = WAL');
+// Function to initialize the database schema
+const initDB = async () => {
+  try {
+    const client = await pool.connect();
+    
+    console.log('🔄 Initializing PostgreSQL database schema...');
 
-// ── Create tables ─────────────────────────────────────────────
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    username        TEXT    NOT NULL UNIQUE,
-    wallet_address  TEXT    NOT NULL UNIQUE,
-    avatar_url      TEXT,
-    bio             TEXT    DEFAULT '',
-    xlm_rate        REAL    DEFAULT 0,
-    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id              SERIAL PRIMARY KEY,
+        username        VARCHAR(255) NOT NULL UNIQUE,
+        wallet_address  VARCHAR(255) NOT NULL UNIQUE,
+        avatar_url      TEXT,
+        bio             TEXT DEFAULT '',
+        xlm_rate        NUMERIC DEFAULT 0,
+        created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
-  CREATE TABLE IF NOT EXISTS skills (
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    name    TEXT    NOT NULL,
-    type    TEXT    NOT NULL CHECK(type IN ('offer','want')),
-    level   TEXT    DEFAULT 'intermediate'
-  );
+      CREATE TABLE IF NOT EXISTS skills (
+        id              SERIAL PRIMARY KEY,
+        user_id         INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        skill_name      VARCHAR(255) NOT NULL,
+        level           VARCHAR(50) CHECK (level IN ('beginner', 'intermediate', 'advanced')),
+        type            VARCHAR(50) CHECK (type IN ('offer', 'want')),
+        created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
-  CREATE TABLE IF NOT EXISTS ratings (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    rater_id    INTEGER NOT NULL REFERENCES users(id),
-    ratee_id    INTEGER NOT NULL REFERENCES users(id),
-    score       INTEGER NOT NULL CHECK(score BETWEEN 1 AND 5),
-    comment     TEXT,
-    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(rater_id, ratee_id)
-  );
+      CREATE TABLE IF NOT EXISTS ratings (
+        id              SERIAL PRIMARY KEY,
+        rater_id        INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        target_id       INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        score           INTEGER CHECK (score >= 1 AND score <= 5),
+        comment         TEXT,
+        created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
-  CREATE TABLE IF NOT EXISTS exchanges (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    skill_offer   TEXT    NOT NULL,
-    skill_want    TEXT    NOT NULL,
-    description   TEXT    DEFAULT '',
-    level_offer   TEXT    DEFAULT 'intermediate',
-    level_want    TEXT    DEFAULT 'intermediate',
-    status        TEXT    NOT NULL DEFAULT 'open'
-                          CHECK(status IN ('open','matched','closed')),
-    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+      CREATE TABLE IF NOT EXISTS exchanges (
+        id              SERIAL PRIMARY KEY,
+        user_id         INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        skill_offer     VARCHAR(255) NOT NULL,
+        level_offer     VARCHAR(50) DEFAULT 'intermediate',
+        skill_want      VARCHAR(255) NOT NULL,
+        level_want      VARCHAR(50) DEFAULT 'intermediate',
+        description     TEXT,
+        status          VARCHAR(50) DEFAULT 'open' CHECK (status IN ('open', 'closed')),
+        created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
-  CREATE TABLE IF NOT EXISTS exchange_requests (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    exchange_id  INTEGER NOT NULL REFERENCES exchanges(id) ON DELETE CASCADE,
-    requester_id INTEGER NOT NULL REFERENCES users(id),
-    message      TEXT    DEFAULT '',
-    status       TEXT    NOT NULL DEFAULT 'pending'
-                         CHECK(status IN ('pending','accepted','rejected')),
-    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(exchange_id, requester_id)
-  );
-`);
+      CREATE TABLE IF NOT EXISTS exchange_requests (
+        id              SERIAL PRIMARY KEY,
+        exchange_id     INTEGER REFERENCES exchanges(id) ON DELETE CASCADE,
+        requester_id    INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        message         TEXT,
+        status          VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+        created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
 
-module.exports = db;
+    console.log('✅ PostgreSQL schema initialized successfully.');
+    client.release();
+  } catch (err) {
+    console.error('❌ Database initialization error:', err.message);
+    if (err.message.includes('password authentication failed') || err.message.includes('URI')) {
+      console.error('⚠️ Make sure your DATABASE_URL is set correctly in .env');
+    }
+  }
+};
+
+// Immediately execute the initialization
+initDB();
+
+module.exports = pool;
