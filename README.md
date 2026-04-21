@@ -1,16 +1,90 @@
-# React + Vite
+# ⚡ Skill Swap - Decentralized Skill Exchange & Learning Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Skill Swap Banner](https://via.placeholder.com/1200x400.png?text=Skill+Swap+-+Learn,+Earn,+Grow)
 
-Currently, two official plugins are available:
+Skill Swap is a Web3 platform built on the Stellar network where users can exchange skills peer-to-peer, learn from professionals using XLM, and form project teams with stake-based commitments.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🔗 Links & Submissions (Stellar Blue Belt)
 
-## React Compiler
+*   **Live Demo:** [https://skillswap-x-xlm.vercel.app/](https://skillswap-x-xlm.vercel.app/)
+*   **Demo Video:** [Insert YouTube/Loom Link Here]
+*   **Architecture Document:** [ARCHITECTURE.md](./ARCHITECTURE.md)
+*   **Feedback Data (Excel):** [Link to Google Sheets/Excel Here]
+*   **Feedback Form:** [Link to Google Form Here]
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 👥 5+ Real Testnet Users (Validation)
 
-## Expanding the ESLint configuration
+Here are the Stellar Testnet wallet addresses of our beta testers who successfully interacted with the MVP:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  `[Wallet Address 1]` (e.g., GABCD...)
+2.  `[Wallet Address 2]`
+3.  `[Wallet Address 3]`
+4.  `[Wallet Address 4]`
+5.  `[Wallet Address 5]`
+
+*(All addresses are verifiable on the Stellar Testnet Explorer).*
+
+## 📈 User Feedback & Iterations
+
+We collected feedback from our testnet users via Google Forms. Below is a summary of the feedback and the specific improvements made to the platform based on it:
+
+### Feedback Summary
+*   **User A:** "The wallet connect button wasn't obvious at first."
+*   **User B:** "I want to be able to filter skills by 'Beginner' or 'Advanced'."
+*   *... [Add actual feedback summary here]*
+
+### Completed Improvement (1st Iteration)
+Based on the feedback, we implemented the following feature:
+*   **Improvement:** [Describe what you built/fixed, e.g., "Added a skill level filter on the Exchange page."]
+*   **Commit Link:** [Insert Git Commit URL Here, e.g., `https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/abcdef123456`]
+
+---
+
+## 🛠️ Tech Stack
+
+*   **Frontend:** React 19, Vite, Tailwind CSS, Framer Motion
+*   **Backend:** Node.js, Express.js
+*   **Database:** PostgreSQL (Supabase/Neon)
+*   **Blockchain:** Stellar SDK, Freighter API (Testnet)
+
+## 🚀 Core Features (MVP)
+
+1.  **Wallet Authentication:** Pure Web3 login using Freighter. No email/password required.
+2.  **Skill Exchange Marketplace:** Post what you offer and what you want in return. Match with peers.
+3.  **Learn from Pros:** (In Progress) Book specialized sessions and pay mentors directly in testnet XLM.
+4.  **Team Formation:** (In Progress) Group up for hackathons and projects with stake-based commitment.
+
+## 💻 Local Setup Instructions
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/soumyaditya-7/Skillswap-x-XLM.git
+   cd "skill swap"
+   ```
+
+2. **Install Frontend Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Install Backend Dependencies:**
+   ```bash
+   cd backend
+   npm install
+   ```
+
+4. **Environment Variables:**
+   Create a `.env` file in the `/backend` folder:
+   ```env
+   PORT=5000
+   JWT_SECRET=your_jwt_secret_key_here
+   DATABASE_URL=postgres://user:pass@host:port/dbname
+   ```
+
+5. **Run the App:**
+   Open two terminals:
+   *   Terminal 1 (Frontend): `npm run dev`
+   *   Terminal 2 (Backend): `cd backend && npm run dev`
+
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/soumyaditya-7/Skillswap-x-XLM/issues).
