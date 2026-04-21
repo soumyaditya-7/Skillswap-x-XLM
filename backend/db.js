@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 // Initialize the connection pool using the DATABASE_URL from .env or fallback
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:Soumya@6009165861@db.tyreewdkrsllxbwsrenc.supabase.co:5432/postgres';
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:Soumya%406009165861@db.tyreewdkrsllxbwsrenc.supabase.co:5432/postgres';
 
 const pool = new Pool({
   connectionString: connectionString,
