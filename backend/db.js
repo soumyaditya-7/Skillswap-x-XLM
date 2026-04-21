@@ -11,9 +11,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     username        TEXT    NOT NULL UNIQUE,
-    email           TEXT    NOT NULL UNIQUE,
-    password_hash   TEXT    NOT NULL,
-    wallet_address  TEXT,
+    wallet_address  TEXT    NOT NULL UNIQUE,
     avatar_url      TEXT,
     bio             TEXT    DEFAULT '',
     xlm_rate        REAL    DEFAULT 0,

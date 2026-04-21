@@ -28,8 +28,7 @@ const request = async (path, options = {}) => {
 
 // ── Auth ──────────────────────────────────────────────────────
 export const authAPI = {
-  register: (body) => request('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
-  login:    (body) => request('/auth/login',    { method: 'POST', body: JSON.stringify(body) }),
+  connectWallet: (wallet_address) => request('/auth/wallet', { method: 'POST', body: JSON.stringify({ wallet_address }) }),
 };
 
 // ── Users / Profile ───────────────────────────────────────────
