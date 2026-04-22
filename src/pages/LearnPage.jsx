@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Star, Clock, BookOpen, CheckCircle, Wallet,
@@ -57,6 +57,12 @@ const professionals = [
 const LearnPage = ({ user, onConnectClick }) => {
   // { pro, status: 'pending'|'signing'|'submitting'|'success'|'error', txHash, error }
   const [txState, setTxState] = useState(null);
+  const [bookedSessions, setBookedSessions] = useState([]);
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('bookedSessions') || '[]');
+    setBookedSessions(saved);
+  }, []);
 
   // ── Core XLM payment function ────────────────────────────────
   const handleBookSession = async (pro) => {
@@ -127,7 +133,9 @@ const LearnPage = ({ user, onConnectClick }) => {
       // 5️⃣  Success!
       const newBooking = { ...pro, bookedAt: new Date().toISOString(), txHash: submitData.hash };
       const existing = JSON.parse(localStorage.getItem('bookedSessions') || '[]');
-      localStorage.setItem('bookedSessions', JSON.stringify([newBooking, ...existing]));
+      const updated = [newBooking, ...existing];
+      localStorage.setItem('bookedSessions', JSON.stringify(updated));
+      setBookedSessions(updated);
       setTxState({ pro, status: 'success', txHash: submitData.hash });
 
     } catch (err) {
@@ -215,14 +223,24 @@ const LearnPage = ({ user, onConnectClick }) => {
                     <Clock size={10} /> per hour
                   </p>
                 </div>
-                <button
-                  onClick={() => handleBookSession(pro)}
-                  className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5
-                             group-hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all"
-                >
-                  <Zap size={13} />
-                  {user ? 'Book & Pay XLM' : 'Connect to Book'}
-                </button>
+                {bookedSessions.some(b => b.id === pro.id) ? (
+                  <button
+                    onClick={() => window.location.href = '/profile'}
+                    className="btn-outline text-xs px-4 py-2 flex items-center gap-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                  >
+                    <CheckCircle size={13} />
+                    Purchased
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleBookSession(pro)}
+                    className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5
+                               group-hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all"
+                  >
+                    <Zap size={13} />
+                    {user ? 'Book & Pay XLM' : 'Connect to Book'}
+                  </button>
+                )}
               </div>
             </motion.div>
           ))}
