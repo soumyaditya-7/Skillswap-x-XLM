@@ -50,8 +50,15 @@ Based on the feedback from User A, we implemented a feature to visually track an
 ## 🚀 Core Features (MVP)
 
 1.  **Wallet Authentication:** Pure Web3 login using Freighter. No email/password required.
+
 2.  **Skill Exchange Marketplace:** Post what you offer and what you want in return. Match with peers.
+    
+    ![Skill Exchange Match](./screenshots/exchange%20match.png)
+
 3.  **Learn from Pros:** Book specialized sessions and pay mentors directly in testnet XLM.
+    
+    ![Course Booking](./screenshots/course%20buy.png)
+
 4.  **Team Formation:** Group up for hackathons and projects with stake-based commitment.
 
 ## 💻 Local Setup Instructions
