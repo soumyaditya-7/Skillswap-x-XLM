@@ -32,6 +32,7 @@ We collected feedback from our testnet users via Google Forms. Below is a summar
 *   **User B:** "The wallet connect button wasn't obvious at first."
 *   **User C:** "I want to be able to filter skills by 'Beginner' or 'Advanced'."
 *   **User D:** "I joined a team, but I couldn't see who else was in it!"
+*   **User E:** "The Skill Exchange page was getting stuck on an infinite loading spinner when there were no posts."
 
 ### Completed Improvement (1st Iteration)
 Based on the feedback from User A, we implemented a feature to visually track and manage purchased sessions:
@@ -42,6 +43,11 @@ Based on the feedback from User A, we implemented a feature to visually track an
 Based on the feedback from User D, we enhanced the Team Formation experience:
 *   **Improvement:** Added a dynamic glassmorphism modal on the "Teams" page that allows users to click the "members" count and view a detailed list of all users currently in that project team.
 *   **Commit Link:** [View Commit 99ea933](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/99ea933)
+
+### Completed Improvement (3rd Iteration)
+Based on the feedback from User E, we fixed the empty state handling on the Skill Exchange marketplace:
+*   **Improvement:** Implemented a graceful fallback mechanism that dynamically injects high-quality mock exchange requests when the database is empty or unresponsive, completely eliminating the infinite loading bug and improving initial user onboarding.
+*   **Commit Link:** [View Commit 969b3be](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/969b3be)
 
 ---
 
