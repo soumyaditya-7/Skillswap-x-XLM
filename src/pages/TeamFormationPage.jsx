@@ -12,7 +12,8 @@ const openTeams = [
 
 const TeamFormationPage = () => {
   const [tab, setTab]           = useState('browse'); // 'browse' | 'create' | 'invite'
-  const [joined, setJoined]     = useState(null);
+  const [joinedTeams, setJoinedTeams] = useState([]);
+  const [recentJoin, setRecentJoin]   = useState(null);
   const [inviteSent, setInviteSent] = useState(false);
   const [walletInput, setWalletInput] = useState('');
   const [form, setForm]         = useState({ name: '', skills: '', stake: '' });
@@ -45,11 +46,11 @@ const TeamFormationPage = () => {
 
         {/* Notifications */}
         <AnimatePresence>
-          {joined && (
+          {recentJoin && (
             <motion.div initial={{ opacity:0,y:-8 }} animate={{ opacity:1,y:0 }} exit={{ opacity:0 }}
               className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-5 py-3 mb-6 text-emerald-400 text-sm font-medium">
-              <CheckCircle size={15}/> Joined <strong>{joined}</strong> · {openTeams.find(t=>t.name===joined)?.stake} XLM staked!
-              <button onClick={()=>setJoined(null)} className="ml-auto"><X size={13}/></button>
+              <CheckCircle size={15}/> Joined <strong>{recentJoin}</strong> · {openTeams.find(t=>t.name===recentJoin)?.stake} XLM staked!
+              <button onClick={()=>setRecentJoin(null)} className="ml-auto"><X size={13}/></button>
             </motion.div>
           )}
           {inviteSent && (
@@ -85,11 +86,22 @@ const TeamFormationPage = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <Users size={12}/> {team.members}/{team.max} members
+                    <Users size={12}/> {team.members + (joinedTeams.includes(team.name) ? 1 : 0)}/{team.max} members
                   </span>
-                  <button onClick={()=>setJoined(team.name)} className="btn-primary text-xs px-4 py-2">
-                    Join & Stake
-                  </button>
+                  {joinedTeams.includes(team.name) ? (
+                    <button disabled className="btn-outline text-xs px-4 py-2 border-emerald-500/30 text-emerald-400 cursor-default opacity-100 flex items-center gap-1.5 bg-emerald-500/5">
+                      <CheckCircle size={13}/> Joined
+                    </button>
+                  ) : (
+                    <button onClick={() => {
+                      if (!joinedTeams.includes(team.name)) {
+                        setJoinedTeams([...joinedTeams, team.name]);
+                        setRecentJoin(team.name);
+                      }
+                    }} className="btn-primary text-xs px-4 py-2">
+                      Join & Stake
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))}
