@@ -18,6 +18,7 @@ const TeamFormationPage = () => {
   const [walletInput, setWalletInput] = useState('');
   const [form, setForm]         = useState({ name: '', skills: '', stake: '' });
   const [created, setCreated]   = useState(false);
+  const [viewMembersTeam, setViewMembersTeam] = useState(null);
 
   return (
     <div className="page-wrapper">
@@ -85,9 +86,9 @@ const TeamFormationPage = () => {
                   {team.skills.map(s=><span key={s} className="tag">{s}</span>)}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
+                  <button onClick={() => setViewMembersTeam(team)} className="flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 transition-colors hover:underline underline-offset-2">
                     <Users size={12}/> {team.members + (joinedTeams.includes(team.name) ? 1 : 0)}/{team.max} members
-                  </span>
+                  </button>
                   {joinedTeams.includes(team.name) ? (
                     <button disabled className="btn-outline text-xs px-4 py-2 border-emerald-500/30 text-emerald-400 cursor-default opacity-100 flex items-center gap-1.5 bg-emerald-500/5">
                       <CheckCircle size={13}/> Joined
@@ -150,6 +151,42 @@ const TeamFormationPage = () => {
           </motion.div>
         )}
       </main>
+
+      {/* Members Modal */}
+      <AnimatePresence>
+        {viewMembersTeam && (
+          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={()=>setViewMembersTeam(null)}>
+            <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.95}} className="glass-card max-w-sm w-full p-6" onClick={e=>e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-5">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Users size={18} className="text-brand-400"/> {viewMembersTeam.name}
+                </h2>
+                <button onClick={()=>setViewMembersTeam(null)} className="text-slate-400 hover:text-white transition-colors"><X size={18}/></button>
+              </div>
+              <div className="space-y-3">
+                {Array.from({length: viewMembersTeam.members}).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-surface-700/50 p-3 rounded-xl border border-white/5">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-violet-500 flex items-center justify-center text-xs font-bold text-white">
+                      M{i+1}
+                    </div>
+                    <span className="font-mono text-sm text-slate-300">
+                      G{Math.random().toString(36).substring(2, 6).toUpperCase()}...{Math.random().toString(36).substring(2, 6).toUpperCase()}
+                    </span>
+                  </div>
+                ))}
+                {joinedTeams.includes(viewMembersTeam.name) && (
+                  <div className="flex items-center gap-3 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-white">
+                      YOU
+                    </div>
+                    <span className="font-mono text-sm text-emerald-400 font-semibold">Your Wallet</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
