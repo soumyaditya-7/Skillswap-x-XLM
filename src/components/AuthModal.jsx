@@ -12,8 +12,14 @@ const AuthModal = ({ onClose, onSuccess }) => {
   useEffect(() => {
     // Check if Freighter is installed when modal opens
     const checkFreighter = async () => {
-      const connected = await isConnected();
-      setHasFreighter(connected);
+      try {
+        const result = await isConnected();
+        // Newer Freighter API returns { isConnected: bool }, older returns bool directly
+        const connected = typeof result === 'object' ? result.isConnected : result;
+        setHasFreighter(!!connected);
+      } catch {
+        setHasFreighter(false);
+      }
     };
     checkFreighter();
   }, []);
@@ -31,16 +37,18 @@ const AuthModal = ({ onClose, onSuccess }) => {
     try {
       // 1. Request access from Freighter Extension
       const accessResponse = await requestAccess();
-      
+
       if (accessResponse.error) {
         throw new Error(accessResponse.error);
       }
 
-      // Extract the wallet address
-      const publicKey = accessResponse.address || accessResponse; // Depending on API version
-      
+      // Newer Freighter API returns { address: '...' }, older returns the key string directly
+      const publicKey = typeof accessResponse === 'object'
+        ? accessResponse.address
+        : accessResponse;
+
       if (!publicKey || typeof publicKey !== 'string') {
-        throw new Error('Failed to retrieve public key from Freighter');
+        throw new Error('Failed to retrieve public key from Freighter. Please unlock your wallet and try again.');
       }
 
       // 2. Authenticate with backend using the public key
@@ -52,7 +60,12 @@ const AuthModal = ({ onClose, onSuccess }) => {
       
     } catch (err) {
       console.error(err);
-      setError(err.message || 'Connection rejected or failed.');
+      // Detect backend not running vs actual server error
+      if (err.message === 'Failed to fetch' || err.message.includes('NetworkError') || err.message.includes('ERR_CONNECTION_REFUSED')) {
+        setError('Cannot reach the Skill Swap server. Make sure the backend is running on port 5000 (run: npm run dev).');
+      } else {
+        setError(err.message || 'Connection rejected or failed.');
+      }
     } finally {
       setLoading(false);
     }
