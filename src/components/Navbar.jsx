@@ -35,12 +35,7 @@ const Navbar = ({ user, onConnectClick, onLogout }) => {
     >
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2 group">
-        <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-600 group-hover:bg-brand-500 transition-colors">
-          <Zap size={16} className="text-white" />
-        </span>
-        <span className="font-bold text-white text-lg tracking-tight">
-          Skill<span className="text-brand-400">Swap</span>
-        </span>
+        <img src="/skillswap-logo.png" alt="Skill Swap Logo" className="h-12 w-auto object-contain drop-shadow-md group-hover:opacity-90 transition-opacity" />
       </Link>
 
       {/* Desktop nav links */}
