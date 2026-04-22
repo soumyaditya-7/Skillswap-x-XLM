@@ -17,8 +17,8 @@ Skill Swap is a Web3 platform built on the Stellar network where users can excha
 Here are the Stellar Testnet wallet addresses of our beta testers who successfully interacted with the MVP:
 
 1.  `GAXY2BE75O3RAWQI3JJBDSNARQZTZE2C32IMGGNJFMZAUARTDVNTMGMT`
-2.  `[Wallet Address 2]`
-3.  `[Wallet Address 3]`
+2.  `GAMX7AYLKU7XOJ6NBCWTSY3W5OSSOBS332M55UG2J5TH5NPCAY545QCM`
+3.  `GAKH2QXR6TUERN6JHRXGT6AW625X4PESSFWPON5CRQ6A2UFPRDMAAZ2F`
 4.  `[Wallet Address 4]`
 5.  `[Wallet Address 5]`
 
