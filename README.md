@@ -60,6 +60,8 @@ Based on the feedback from User A, we implemented a feature to visually track an
     ![Course Booking](./screenshots/course%20buy.png)
 
 4.  **Team Formation:** Group up for hackathons and projects with stake-based commitment.
+    
+    ![Team Formation](./screenshots/team%20joined.png)
 
 ## 💻 Local Setup Instructions
 
