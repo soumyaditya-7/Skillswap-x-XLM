@@ -125,6 +125,9 @@ const LearnPage = ({ user, onConnectClick }) => {
       }
 
       // 5️⃣  Success!
+      const newBooking = { ...pro, bookedAt: new Date().toISOString(), txHash: submitData.hash };
+      const existing = JSON.parse(localStorage.getItem('bookedSessions') || '[]');
+      localStorage.setItem('bookedSessions', JSON.stringify([newBooking, ...existing]));
       setTxState({ pro, status: 'success', txHash: submitData.hash });
 
     } catch (err) {
@@ -289,8 +292,8 @@ const LearnPage = ({ user, onConnectClick }) => {
                   >
                     <ExternalLink size={14} /> View on Stellar Explorer
                   </a>
-                  <button onClick={closeModal} className="btn-outline w-full justify-center text-sm">
-                    Close
+                  <button onClick={() => { closeModal(); window.location.href = '/profile'; }} className="btn-outline w-full justify-center text-sm">
+                    View My Sessions
                   </button>
                 </>
               )}

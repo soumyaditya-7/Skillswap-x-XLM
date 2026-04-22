@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Award, Zap, BookOpen, Users, Edit3 } from 'lucide-react';
+import { Star, Award, Zap, BookOpen, Users, Edit3, ExternalLink } from 'lucide-react';
 import BgBlobs from '../components/BgBlobs';
 
 const skillsOffered = ['React', 'Node.js', 'TypeScript'];
@@ -7,7 +8,6 @@ const skillsWanted  = ['Solidity', 'UI/UX Design', 'Data Science'];
 
 const activity = [
   { icon: Zap,      text: 'Swapped React with Alex R.',           time: '2h ago',   color: 'text-brand-400' },
-  { icon: BookOpen, text: 'Booked session with Sarah Chen',        time: '1d ago',   color: 'text-violet-400' },
   { icon: Users,    text: 'Joined team "DeFi Dashboard"',          time: '3d ago',   color: 'text-indigo-400' },
   { icon: Star,     text: 'Received 5★ from Priya M.',             time: '5d ago',   color: 'text-amber-400' },
 ];
@@ -20,6 +20,12 @@ const stats = [
 ];
 
 const ProfilePage = ({ wallet }) => {
+  const [bookedSessions, setBookedSessions] = useState([]);
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('bookedSessions') || '[]');
+    setBookedSessions(saved);
+  }, []);
   return (
     <div className="page-wrapper">
       <BgBlobs />
@@ -100,6 +106,38 @@ const ProfilePage = ({ wallet }) => {
             </div>
           </motion.div>
         </div>
+
+        {/* My Purchased Sessions */}
+        {bookedSessions.length > 0 && (
+          <motion.div initial={{ opacity:0, y:15 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }} className="glass-card p-6 mb-8">
+            <h2 className="font-semibold text-white mb-5 flex items-center gap-2">
+              <BookOpen size={16} className="text-violet-400" /> My Booked Sessions
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {bookedSessions.map((session, i) => (
+                <div key={i} className="bg-surface-800/50 border border-white/5 rounded-xl p-4 flex flex-col">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${session.color} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
+                      {session.avatar}
+                    </div>
+                    <div>
+                      <p className="font-bold text-white text-sm">{session.name}</p>
+                      <p className="text-xs text-brand-400 font-medium">{session.price} XLM Paid</p>
+                    </div>
+                  </div>
+                  <div className="mt-auto pt-3 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      Tx: {session.txHash?.slice(0, 10)}...
+                    </span>
+                    <button className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">
+                      Join Call
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Recent Activity */}
         <motion.div initial={{ opacity:0, y:15 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }} className="glass-card p-6">
