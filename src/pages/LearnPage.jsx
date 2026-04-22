@@ -5,7 +5,7 @@ import {
   ExternalLink, XCircle, Loader2, AlertCircle, Zap
 } from 'lucide-react';
 import {
-  Networks, TransactionBuilder, Operation, Asset, Memo
+  Networks, TransactionBuilder, Operation, Asset, Memo, Account
 } from '@stellar/stellar-sdk';
 import { signTransaction } from '@stellar/freighter-api';
 import BgBlobs from '../components/BgBlobs';
@@ -81,13 +81,7 @@ const LearnPage = ({ user, onConnectClick }) => {
 
       // 2️⃣  Build the transaction
       setTxState({ pro, status: 'pending', message: 'Building transaction…' });
-      const account = {
-        id: accountData.id,
-        sequence: accountData.sequence,
-        incrementSequenceNumber() {
-          this.sequence = String(BigInt(this.sequence) + BigInt(1));
-        },
-      };
+      const account = new Account(accountData.id || accountData.account_id, accountData.sequence);
 
       const tx = new TransactionBuilder(account, {
         fee:        '100000',               // 0.01 XLM fee (generous for testnet)
