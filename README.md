@@ -10,7 +10,7 @@ Skill Swap is a Web3 platform built on the Stellar network where users can excha
 *   **Demo Video:** [Insert YouTube/Loom Link Here]
 *   **Architecture Document:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 *   **Feedback Data (Excel):** [Link to Google Sheets/Excel Here]
-*   **Feedback Form:** [Link to Google Form Here]
+*   **Feedback Form:** [Google Form Link](https://docs.google.com/forms/d/e/1FAIpQLSeNHJMRW0xsQzJvtutOWCbO0DSA3ueBNLVgp35plzA2AV_tXw/viewform?usp=publish-editor)
 
 ## 👥 5+ Real Testnet Users (Validation)
 
