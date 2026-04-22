@@ -35,7 +35,7 @@ We collected feedback from our testnet users via Google Forms. Below is a summar
 
 ### Completed Improvement (1st Iteration)
 Based on the feedback, we implemented the following feature:
-*   **Improvement:** [Describe what you built/fixed, e.g., "Added a skill level filter on the Exchange page."]
+*   **Improvement:** [Describe what you built/fixed, e.g., "Added a clear error message when the backend is unreachable during wallet connection."]
 *   **Commit Link:** [Insert Git Commit URL Here, e.g., `https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/abcdef123456`]
 
 ---
@@ -51,8 +51,8 @@ Based on the feedback, we implemented the following feature:
 
 1.  **Wallet Authentication:** Pure Web3 login using Freighter. No email/password required.
 2.  **Skill Exchange Marketplace:** Post what you offer and what you want in return. Match with peers.
-3.  **Learn from Pros:** (In Progress) Book specialized sessions and pay mentors directly in testnet XLM.
-4.  **Team Formation:** (In Progress) Group up for hackathons and projects with stake-based commitment.
+3.  **Learn from Pros:** Book specialized sessions and pay mentors directly in testnet XLM.
+4.  **Team Formation:** Group up for hackathons and projects with stake-based commitment.
 
 ## 💻 Local Setup Instructions
 
