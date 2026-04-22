@@ -35,7 +35,7 @@ app.use((_req, res) => {
 // ── Global error handler ──────────────────────────────────────
 app.use((err, _req, res, _next) => {
   console.error('[ERROR]', err.message);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: err.message || 'Internal server error' });
 });
 
 // ── Start / Export ────────────────────────────────────────────
