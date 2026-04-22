@@ -29,14 +29,14 @@ Here are the Stellar Testnet wallet addresses of our beta testers who successful
 We collected feedback from our testnet users via Google Forms. Below is a summary of the feedback and the specific improvements made to the platform based on it:
 
 ### Feedback Summary
-*   **User A:** "The wallet connect button wasn't obvious at first."
-*   **User B:** "I want to be able to filter skills by 'Beginner' or 'Advanced'."
-*   *... [Add actual feedback summary here]*
+*   **User A:** "Payment was successful, but it is not showing the course I bought anywhere on the site."
+*   **User B:** "The wallet connect button wasn't obvious at first."
+*   **User C:** "I want to be able to filter skills by 'Beginner' or 'Advanced'."
 
 ### Completed Improvement (1st Iteration)
-Based on the feedback, we implemented the following feature:
-*   **Improvement:** [Describe what you built/fixed, e.g., "Added a clear error message when the backend is unreachable during wallet connection."]
-*   **Commit Link:** [Insert Git Commit URL Here, e.g., `https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/abcdef123456`]
+Based on the feedback from User A, we implemented a feature to visually track and manage purchased sessions:
+*   **Improvement:** Added a "My Booked Sessions" dashboard to the Profile page, and updated the Learn page to change the purchase button to a green "Purchased" tag once a session is bought.
+*   **Commit Link:** [View Commit f6ad9d8](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/f6ad9d8) and [View Commit 80f018c](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/80f018c)
 
 ---
 
