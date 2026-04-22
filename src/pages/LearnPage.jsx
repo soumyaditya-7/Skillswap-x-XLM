@@ -100,7 +100,7 @@ const LearnPage = ({ user, onConnectClick }) => {
             amount:      String(pro.price), // e.g. "10"
           })
         )
-        .addMemo(Memo.text(`SkillSwap: Session with ${pro.name}`))
+        .addMemo(Memo.text(`SkillSwap: ${pro.name}`.substring(0, 28)))
         .setTimeout(180)
         .build();
 
