@@ -31,11 +31,17 @@ We collected feedback from our testnet users via Google Forms. Below is a summar
 *   **User A:** "Payment was successful, but it is not showing the course I bought anywhere on the site."
 *   **User B:** "The wallet connect button wasn't obvious at first."
 *   **User C:** "I want to be able to filter skills by 'Beginner' or 'Advanced'."
+*   **User D:** "I joined a team, but I couldn't see who else was in it!"
 
 ### Completed Improvement (1st Iteration)
 Based on the feedback from User A, we implemented a feature to visually track and manage purchased sessions:
 *   **Improvement:** Added a "My Booked Sessions" dashboard to the Profile page, and updated the Learn page to change the purchase button to a green "Purchased" tag once a session is bought.
 *   **Commit Link:** [View Commit f6ad9d8](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/f6ad9d8) and [View Commit 80f018c](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/80f018c)
+
+### Completed Improvement (2nd Iteration)
+Based on the feedback from User D, we enhanced the Team Formation experience:
+*   **Improvement:** Added a dynamic glassmorphism modal on the "Teams" page that allows users to click the "members" count and view a detailed list of all users currently in that project team.
+*   **Commit Link:** [View Commit 99ea933](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/99ea933)
 
 ---
 
