@@ -1,8 +1,8 @@
 const express = require('express');
-const { TransactionBuilder, Networks, Keypair, Server } = require('@stellar/stellar-sdk');
+const { TransactionBuilder, Networks, Keypair, Horizon } = require('@stellar/stellar-sdk');
 
 const router = express.Router();
-const server = new Server('https://horizon-testnet.stellar.org');
+const server = new Horizon.Server('https://horizon-testnet.stellar.org');
 
 router.post('/sponsor', async (req, res) => {
   try {
