@@ -225,7 +225,7 @@ const TeamFormationPage = ({ user, onConnectClick }) => {
                       M{i+1}
                     </div>
                     <span className="font-mono text-sm text-slate-300">
-                      G{Math.random().toString(36).substring(2, 6).toUpperCase()}...{Math.random().toString(36).substring(2, 6).toUpperCase()}
+                      G{['B4', 'X9', 'M2', 'F7'][i % 4]}...{['A3', 'Y8', 'L1', 'C6'][i % 4]}
                     </span>
                   </div>
                 ))}
