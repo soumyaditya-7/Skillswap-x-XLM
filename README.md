@@ -73,6 +73,31 @@ The `@vercel/analytics` SDK is integrated directly into the React app (`App.jsx`
 
 ---
 
+## 🔍 Monitoring & Performance
+
+Skill Swap uses **Vercel Speed Insights** for real-user performance monitoring and Core Web Vitals tracking in production.
+
+### What We Monitor:
+*   **LCP (Largest Contentful Paint)** — Page load speed experienced by real users.
+*   **FID (First Input Delay)** — Responsiveness when users first interact with the app.
+*   **CLS (Cumulative Layout Shift)** — Visual stability of the UI.
+*   **Real-User Performance Scores** — Aggregated P75 scores across all visits.
+
+### How It Works:
+The `@vercel/speed-insights` SDK is integrated into `App.jsx` alongside the Analytics component. It automatically measures performance on every user's real device and network conditions, giving us production-grade monitoring data without any additional configuration.
+
+> **Live Monitoring Dashboard:** [View on Vercel Speed Insights](https://vercel.com/soumyaditya-7s-projects/skillswap-x-xlm-o4e5/speed-insights)
+
+### Security Checklist:
+*   ✅ All secret keys stored as Vercel Environment Variables (not in source code).
+*   ✅ `.env` files are gitignored — no credentials exposed in the repository.
+*   ✅ JWT tokens used for all authenticated API routes.
+*   ✅ Backend uses parameterized queries (via `pg` pool) to prevent SQL injection.
+*   ✅ CORS restricted via Express middleware.
+*   ✅ Sponsor Secret Key never exposed to the frontend (server-side only).
+
+---
+
 ## 🛠️ Tech Stack
 
 *   **Frontend:** React 19, Vite, Tailwind CSS, Framer Motion

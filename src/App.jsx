@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Navbar            from './components/Navbar';
 import AuthModal         from './components/AuthModal';
 import LandingPage       from './pages/LandingPage';
@@ -80,6 +81,9 @@ const App = () => {
 
       {/* Vercel Web Analytics - tracks page views & DAU automatically */}
       <Analytics />
+
+      {/* Vercel Speed Insights - tracks Core Web Vitals & performance */}
+      <SpeedInsights />
     </BrowserRouter>
   );
 };
