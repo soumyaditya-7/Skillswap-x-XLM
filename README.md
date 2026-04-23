@@ -67,7 +67,7 @@ Skill Swap uses **Vercel Web Analytics** for real-time production monitoring of 
 ### How It Works:
 The `@vercel/analytics` SDK is integrated directly into the React app (`App.jsx`). The `<Analytics />` component automatically captures every page navigation and reports it to Vercel's dashboard — **no manual event tracking needed**.
 
-![Metrics Dashboard](./screenshots/metrics.png)
+![Metrics Dashboard](./screenshots/live%20matric.png)
 
 > **Live Metrics Dashboard:** [View on Vercel Analytics](https://vercel.com/soumyaditya-7s-projects/skillswap-x-xlm-o4e5/analytics)
 
