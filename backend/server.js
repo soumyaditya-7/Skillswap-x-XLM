@@ -5,6 +5,7 @@ const cors    = require('cors');
 const authRoutes      = require('./routes/auth');
 const userRoutes      = require('./routes/users');
 const exchangeRoutes  = require('./routes/exchanges');
+const transactionRoutes = require('./routes/transactions');
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth',      authRoutes);
 app.use('/api/users',     userRoutes);
 app.use('/api/exchanges', exchangeRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // ── Health check ──────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {

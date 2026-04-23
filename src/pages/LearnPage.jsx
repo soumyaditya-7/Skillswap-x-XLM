@@ -116,18 +116,17 @@ const LearnPage = ({ user, onConnectClick }) => {
 
       const signedXdr = signResult.signedTxXdr ?? signResult;
 
-      // 4️⃣  Submit to Stellar Testnet
+      // 4️⃣  Submit to Backend for Fee Sponsorship!
       setTxState({ pro, status: 'submitting' });
-      const submitRes = await fetch(`${HORIZON_URL}/transactions`, {
+      const submitRes = await fetch(`http://localhost:5000/api/transactions/sponsor`, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body:    `tx=${encodeURIComponent(signedXdr)}`,
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ innerTxXdr: signedXdr }),
       });
       const submitData = await submitRes.json();
 
       if (!submitRes.ok) {
-        const detail = submitData?.extras?.result_codes?.transaction || submitData.title;
-        throw new Error(`Transaction failed: ${detail}`);
+        throw new Error(submitData.error || 'Sponsorship failed');
       }
 
       // 5️⃣  Success!
@@ -275,12 +274,12 @@ const LearnPage = ({ user, onConnectClick }) => {
                   <h2 className="text-xl font-bold text-white mb-2">
                     {txState.status === 'pending'    && 'Preparing Transaction…'}
                     {txState.status === 'signing'    && 'Waiting for Freighter…'}
-                    {txState.status === 'submitting' && 'Submitting to Stellar…'}
+                    {txState.status === 'submitting' && 'Sponsoring Gas Fee & Submitting…'}
                   </h2>
                   <p className="text-slate-400 text-sm">
                     {txState.status === 'pending'    && (txState.message || 'Building your payment…')}
                     {txState.status === 'signing'    && 'Please approve the transaction in your Freighter wallet extension.'}
-                    {txState.status === 'submitting' && 'Broadcasting your signed transaction to the Testnet…'}
+                    {txState.status === 'submitting' && 'Skill Swap is paying your network fee and broadcasting the transaction…'}
                   </p>
                   <div className="mt-6 flex items-center justify-center gap-2 text-xs text-slate-500">
                     <Wallet size={12} />
