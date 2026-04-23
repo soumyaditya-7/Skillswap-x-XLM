@@ -105,6 +105,82 @@ The `@vercel/speed-insights` SDK is integrated into `App.jsx` alongside the Anal
 *   **Database:** PostgreSQL (Supabase/Neon)
 *   **Blockchain:** Stellar SDK, Freighter API (Testnet)
 
+---
+
+## 🗂️ Data Indexing
+
+Skill Swap indexes on-chain Stellar data in real-time using the **Stellar Horizon REST API** (`https://horizon-testnet.stellar.org`). This removes the need for a custom indexer while giving us live access to wallet balances, account sequences, and transaction history.
+
+### How It Works:
+
+**1. Account Lookup (before every payment)**
+When a user clicks "Book & Pay XLM", the frontend hits the Horizon API to fetch the sender's live account state:
+```
+GET https://horizon-testnet.stellar.org/accounts/{wallet_address}
+```
+This returns the account's current **sequence number** (required to build a valid Stellar transaction) and **XLM balance**.
+
+**2. Transaction Verification (after payment)**
+Every successful transaction generates a hash that is linked directly to the **Stellar Expert Explorer**:
+```
+https://stellar.expert/explorer/testnet/tx/{txHash}
+```
+Users can click "View on Stellar Explorer" to independently verify their payment on-chain.
+
+**3. Wallet Funding via Friendbot**
+New users can fund their testnet wallet using the Stellar Friendbot endpoint, which our UI links to automatically if a payment fails due to insufficient balance:
+```
+GET https://friendbot.stellar.org?addr={wallet_address}
+```
+
+> **Live Indexing Endpoint:** `https://horizon-testnet.stellar.org/accounts/{wallet_address}`  
+> **Explorer:** [Stellar Expert (Testnet)](https://stellar.expert/explorer/testnet)
+
+---
+
+## ⚡ Advanced Feature: Fee Sponsorship (Gasless Transactions)
+
+Skill Swap implements **gasless transactions** using Stellar's `FeeBumpTransaction` — one of the most advanced features on the Stellar network. This means **users never need XLM to pay network fees**; the platform sponsors all fees on their behalf.
+
+### Implementation Flow:
+
+```
+User clicks "Book & Pay XLM"
+        │
+        ▼
+1. Frontend fetches sender account from Horizon API
+        │
+        ▼
+2. Frontend builds an inner Payment Transaction (user pays mentor in XLM)
+        │
+        ▼
+3. Freighter wallet prompts user to SIGN the inner transaction
+        │
+        ▼
+4. Signed XDR is sent to backend: POST /api/transactions/sponsor
+        │
+        ▼
+5. Backend wraps the inner tx in a FeeBumpTransaction
+   (sponsor keypair covers all network fees)
+        │
+        ▼
+6. Backend signs the FeeBump tx with the SPONSOR_SECRET_KEY
+        │
+        ▼
+7. Backend submits the final FeeBump transaction to Stellar Horizon
+        │
+        ▼
+8. Frontend receives txHash → shows "Payment Sent! 🎉"
+```
+
+### Key Files:
+*   **Backend logic:** [`backend/routes/transactions.js`](./backend/routes/transactions.js) — Builds and signs the `FeeBumpTransaction`.
+*   **Frontend flow:** [`src/pages/LearnPage.jsx`](./src/pages/LearnPage.jsx) — Fetches account, builds inner tx, calls Freighter, then submits to sponsor endpoint.
+*   **API Service:** [`src/services/api.js`](./src/services/api.js) — `transactionsAPI.sponsor(signedXdr)` call.
+
+### Why This Matters:
+Without fee sponsorship, every user would need to hold XLM just to pay transaction fees. This creates a massive onboarding barrier. With `FeeBumpTransaction`, **new users can transact on Stellar with zero XLM balance**, making the platform truly accessible to everyone.
+
 ## 🚀 Core Features (MVP)
 
 1.  **Wallet Authentication:** Pure Web3 login using Freighter. No email/password required.
