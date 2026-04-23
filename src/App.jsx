@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar            from './components/Navbar';
 import AuthModal         from './components/AuthModal';
 import LandingPage       from './pages/LandingPage';
@@ -76,6 +77,9 @@ const App = () => {
         {/* Fallback */}
         <Route path="*"          element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* Vercel Web Analytics - tracks page views & DAU automatically */}
+      <Analytics />
     </BrowserRouter>
   );
 };

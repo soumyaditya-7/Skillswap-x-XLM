@@ -53,6 +53,24 @@ Based on the feedback from User E, we fixed the empty state handling on the Skil
 
 ---
 
+## 📊 Metrics & Analytics Dashboard
+
+Skill Swap uses **Vercel Web Analytics** for real-time production monitoring of user engagement.
+
+### What We Track:
+*   **Page Views** — Total visits to each page (Landing, Learn, Exchange, Teams, Profile).
+*   **Unique Visitors** — Number of distinct users per day, week, and month.
+*   **Daily Active Users (DAU)** — Vercel analytics tracks unique session activity daily.
+*   **Top Pages** — Which features users interact with most.
+*   **Referral Sources** — Where our users are coming from.
+
+### How It Works:
+The `@vercel/analytics` SDK is integrated directly into the React app (`App.jsx`). The `<Analytics />` component automatically captures every page navigation and reports it to Vercel's dashboard — **no manual event tracking needed**.
+
+> **Live Metrics Dashboard:** [View on Vercel Analytics](https://vercel.com/soumyaditya-7s-projects/skillswap-x-xlm-o4e5/analytics)
+
+---
+
 ## 🛠️ Tech Stack
 
 *   **Frontend:** React 19, Vite, Tailwind CSS, Framer Motion
