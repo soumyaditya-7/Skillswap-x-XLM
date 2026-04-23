@@ -4,9 +4,10 @@
 
 Skill Swap is a Web3 platform built on the Stellar network where users can exchange skills peer-to-peer, learn from professionals using XLM, and form project teams with stake-based commitments.
 
-## 🔗 Links & Submissions (Stellar Blue Belt)
+## 🔗 Links & Submissions (Stellar Black Belt)
 
 *   **Live Demo:** [https://skillswap-x-xlm-o4e5.vercel.app/](https://skillswap-x-xlm-o4e5.vercel.app/)
+*   **Community Post (X/Twitter):** [View X Post](https://x.com/Soumyadity19916/status/2047428983361515919?s=20)
 *   **Demo Video:** [Watch MVP Demo Video](./screenshots/system%20flow.mp4)
 *   **Architecture Document:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 *   **Feedback Data (Excel):** [View Feedback Responses](https://docs.google.com/spreadsheets/d/1PJ1PdyjCmBWcgA_T6TkUzU9RchVvqgDoD0JPXHa7css/edit?usp=sharing)
