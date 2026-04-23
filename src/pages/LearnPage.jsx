@@ -8,6 +8,7 @@ import {
   Networks, TransactionBuilder, Operation, Asset, Memo, Account
 } from '@stellar/stellar-sdk';
 import { signTransaction } from '@stellar/freighter-api';
+import { transactionsAPI } from '../services/api';
 import BgBlobs from '../components/BgBlobs';
 
 // ── Testnet Horizon ──────────────────────────────────────────────
@@ -118,16 +119,7 @@ const LearnPage = ({ user, onConnectClick }) => {
 
       // 4️⃣  Submit to Backend for Fee Sponsorship!
       setTxState({ pro, status: 'submitting' });
-      const submitRes = await fetch(`http://localhost:5000/api/transactions/sponsor`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ innerTxXdr: signedXdr }),
-      });
-      const submitData = await submitRes.json();
-
-      if (!submitRes.ok) {
-        throw new Error(submitData.error || 'Sponsorship failed');
-      }
+      const submitData = await transactionsAPI.sponsor(signedXdr);
 
       // 5️⃣  Success!
       const newBooking = { ...pro, bookedAt: new Date().toISOString(), txHash: submitData.hash };

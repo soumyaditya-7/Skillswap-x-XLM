@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Plus, Wallet, CheckCircle, X, Lock, ExternalLink, Loader2, XCircle } from 'lucide-react';
 import { Networks, TransactionBuilder, Operation, Asset, Memo, Account } from '@stellar/stellar-sdk';
 import { signTransaction } from '@stellar/freighter-api';
+import { transactionsAPI } from '../services/api';
 import BgBlobs from '../components/BgBlobs';
 
 const HORIZON_URL = 'https://horizon-testnet.stellar.org';
@@ -67,14 +68,7 @@ const TeamFormationPage = ({ user, onConnectClick }) => {
       const signedXdr = signResult.signedTxXdr ?? signResult;
 
       setTxState({ team, status: 'submitting' });
-      const submitRes = await fetch(`http://localhost:5000/api/transactions/sponsor`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ innerTxXdr: signedXdr }),
-      });
-      const submitData = await submitRes.json();
-
-      if (!submitRes.ok) throw new Error(submitData.error || 'Sponsorship failed');
+      const submitData = await transactionsAPI.sponsor(signedXdr);
 
       setJoinedTeams([...joinedTeams, team.name]);
       setRecentJoin(team.name);

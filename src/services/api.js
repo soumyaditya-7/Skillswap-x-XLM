@@ -92,5 +92,10 @@ export const exchangesAPI = {
   mine: () => request('/exchanges/user/mine'),
 };
 
+// ── Transactions ──────────────────────────────────────────────
+export const transactionsAPI = {
+  sponsor: (innerTxXdr) => request('/transactions/sponsor', { method: 'POST', body: JSON.stringify({ innerTxXdr }) })
+};
+
 // ── Health ────────────────────────────────────────────────────
 export const healthCheck = () => request('/health');
