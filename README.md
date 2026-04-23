@@ -7,6 +7,7 @@ Skill Swap is a Web3 platform built on the Stellar network where users can excha
 ## 🔗 Links & Submissions (Stellar Blue Belt)
 
 *   **Live Demo:** [https://skillswap-x-xlm-o4e5.vercel.app/](https://skillswap-x-xlm-o4e5.vercel.app/)
+*   **Demo Video:** [Watch MVP Demo Video](./screenshots/system%20flow.mp4)
 *   **Architecture Document:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 *   **Feedback Data (Excel):** [View Feedback Responses](https://docs.google.com/spreadsheets/d/1PJ1PdyjCmBWcgA_T6TkUzU9RchVvqgDoD0JPXHa7css/edit?usp=sharing)
 *   **Feedback Form:** [Google Form Link](https://docs.google.com/forms/d/e/1FAIpQLSeNHJMRW0xsQzJvtutOWCbO0DSA3ueBNLVgp35plzA2AV_tXw/viewform?usp=publish-editor)
