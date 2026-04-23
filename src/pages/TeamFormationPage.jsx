@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Plus, Wallet, CheckCircle, X, Lock } from 'lucide-react';
+import { Users, Plus, Wallet, CheckCircle, X, Lock, ExternalLink, Loader2, XCircle } from 'lucide-react';
+import { Networks, TransactionBuilder, Operation, Asset, Memo, Account } from '@stellar/stellar-sdk';
+import { signTransaction } from '@stellar/freighter-api';
 import BgBlobs from '../components/BgBlobs';
+
+const HORIZON_URL = 'https://horizon-testnet.stellar.org';
+const VAULT_ADDRESS = 'GAGCHDYVYDY2OC2LUKU3S2R3UFFK5RB6KPH26GFIT4TY2J2NSRGBH5GE';
 
 const openTeams = [
   { id: 1, name: 'DeFi Dashboard',    skills: ['React', 'Solidity', 'UI/UX'], stake: 10,  members: 2, max: 4 },
@@ -10,7 +15,7 @@ const openTeams = [
   { id: 4, name: 'Web3 Freelance Hub',skills: ['Design', 'Marketing', 'PM'],  stake: 5,   members: 2, max: 4 },
 ];
 
-const TeamFormationPage = () => {
+const TeamFormationPage = ({ user, onConnectClick }) => {
   const [tab, setTab]           = useState('browse'); // 'browse' | 'create' | 'invite'
   const [joinedTeams, setJoinedTeams] = useState([]);
   const [recentJoin, setRecentJoin]   = useState(null);
@@ -19,6 +24,67 @@ const TeamFormationPage = () => {
   const [form, setForm]         = useState({ name: '', skills: '', stake: '' });
   const [created, setCreated]   = useState(false);
   const [viewMembersTeam, setViewMembersTeam] = useState(null);
+  const [txState, setTxState] = useState(null);
+
+  const handleJoinStake = async (team) => {
+    if (!user) {
+      onConnectClick();
+      return;
+    }
+
+    setTxState({ team, status: 'pending' });
+
+    try {
+      setTxState({ team, status: 'pending', message: 'Loading your account…' });
+      const response = await fetch(`${HORIZON_URL}/accounts/${user.wallet_address}`);
+      if (!response.ok) {
+        throw new Error('Account not found on Stellar Testnet.');
+      }
+      const accountData = await response.json();
+      const account = new Account(accountData.id || accountData.account_id, accountData.sequence);
+
+      setTxState({ team, status: 'pending', message: 'Building staking transaction…' });
+      const tx = new TransactionBuilder(account, {
+        fee: '100000',
+        networkPassphrase: Networks.TESTNET,
+      })
+      .addOperation(
+        Operation.payment({
+          destination: VAULT_ADDRESS,
+          asset: Asset.native(),
+          amount: String(team.stake),
+        })
+      )
+      .addMemo(Memo.text(`Stake: ${team.name}`.substring(0, 28)))
+      .setTimeout(180)
+      .build();
+
+      const txXdr = tx.toXDR();
+
+      setTxState({ team, status: 'signing' });
+      const signResult = await signTransaction(txXdr, { networkPassphrase: Networks.TESTNET });
+      if (signResult.error) throw new Error(signResult.error);
+      const signedXdr = signResult.signedTxXdr ?? signResult;
+
+      setTxState({ team, status: 'submitting' });
+      const submitRes = await fetch(`http://localhost:5000/api/transactions/sponsor`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ innerTxXdr: signedXdr }),
+      });
+      const submitData = await submitRes.json();
+
+      if (!submitRes.ok) throw new Error(submitData.error || 'Sponsorship failed');
+
+      setJoinedTeams([...joinedTeams, team.name]);
+      setRecentJoin(team.name);
+      setTxState({ team, status: 'success', txHash: submitData.hash });
+
+    } catch (err) {
+      console.error('Staking error:', err);
+      setTxState({ team, status: 'error', error: err.message });
+    }
+  };
 
   return (
     <div className="page-wrapper">
@@ -94,12 +160,7 @@ const TeamFormationPage = () => {
                       <CheckCircle size={13}/> Joined
                     </button>
                   ) : (
-                    <button onClick={() => {
-                      if (!joinedTeams.includes(team.name)) {
-                        setJoinedTeams([...joinedTeams, team.name]);
-                        setRecentJoin(team.name);
-                      }
-                    }} className="btn-primary text-xs px-4 py-2">
+                    <button onClick={() => handleJoinStake(team)} className="btn-primary text-xs px-4 py-2">
                       Join & Stake
                     </button>
                   )}
@@ -183,6 +244,72 @@ const TeamFormationPage = () => {
                   </div>
                 )}
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Transaction Modal */}
+      <AnimatePresence>
+        {txState && (
+          <motion.div
+            key="tx-backdrop"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              key="tx-panel"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="glass-card w-full max-w-sm p-8 text-center"
+            >
+              {['pending', 'signing', 'submitting'].includes(txState.status) && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-brand-600/20 flex items-center justify-center mb-5 animate-pulse">
+                    <Loader2 size={30} className="text-brand-400 animate-spin" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">
+                    {txState.status === 'pending'    && 'Preparing Stake…'}
+                    {txState.status === 'signing'    && 'Waiting for Freighter…'}
+                    {txState.status === 'submitting' && 'Sponsoring Gas Fee…'}
+                  </h2>
+                  <p className="text-slate-400 text-sm mb-5">
+                    {txState.status === 'pending'    && (txState.message || 'Building your transaction…')}
+                    {txState.status === 'signing'    && 'Please approve the staking transaction in Freighter.'}
+                    {txState.status === 'submitting' && 'Skill Swap is paying your network fee and broadcasting...'}
+                  </p>
+                </>
+              )}
+
+              {txState.status === 'success' && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-5">
+                    <CheckCircle size={30} className="text-emerald-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Staked Successfully!</h2>
+                  <p className="text-slate-400 text-sm mb-5">
+                    You joined {txState.team.name} and staked {txState.team.stake} XLM.
+                  </p>
+                  <a href={`https://stellar.expert/explorer/testnet/tx/${txState.txHash}`} target="_blank" rel="noopener noreferrer" className="btn-primary w-full justify-center mb-3 text-sm">
+                    <ExternalLink size={14} /> View on Stellar Explorer
+                  </a>
+                  <button onClick={() => setTxState(null)} className="btn-outline w-full justify-center text-sm">
+                    Close
+                  </button>
+                </>
+              )}
+
+              {txState.status === 'error' && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-5">
+                    <XCircle size={30} className="text-red-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Staking Failed</h2>
+                  <p className="text-slate-400 text-sm mb-5 leading-relaxed">{txState.error}</p>
+                  <button onClick={() => setTxState(null)} className="btn-outline w-full justify-center text-sm">Close</button>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}
