@@ -86,6 +86,8 @@ Skill Swap uses **Vercel Speed Insights** for real-user performance monitoring a
 ### How It Works:
 The `@vercel/speed-insights` SDK is integrated into `App.jsx` alongside the Analytics component. It automatically measures performance on every user's real device and network conditions, giving us production-grade monitoring data without any additional configuration.
 
+![Monitoring Dashboard](./screenshots/monitoring.png)
+
 > **Live Monitoring Dashboard:** [View on Vercel Speed Insights](https://vercel.com/soumyaditya-7s-projects/skillswap-x-xlm-o4e5/speed-insights)
 
 ### Security Checklist:
