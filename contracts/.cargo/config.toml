@@ -1,0 +1,4 @@
+# Only set WASM-specific flags when explicitly targeting wasm32.
+# Do NOT set [build] target here — that would break `cargo test`.
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+sign-ext"]

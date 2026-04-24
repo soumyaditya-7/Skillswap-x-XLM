@@ -232,5 +232,69 @@ Without fee sponsorship, every user would need to hold XLM just to pay transacti
    *   Terminal 1 (Frontend): `npm run dev`
    *   Terminal 2 (Backend): `cd backend && npm run dev`
 
+---
+
+## 📜 Smart Contract (Soroban)
+
+Skill Swap uses a Soroban smart contract (written in Rust) for trustless Web3 operations. The contract handles escrow, staking, and decentralized skill exchange.
+
+**Network:** Stellar Testnet  
+**Contract ID:** `CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS`
+
+### Contract Features
+*   **Skill Exchange:** `list_skill` · `request_swap` · `accept_swap` · `complete_swap` · `cancel_listing`
+*   **Session Booking:** `book_session` · `confirm_session` · `dispute_session` · `resolve_dispute`
+*   **Team Formation:** `create_team` · `join_team` · `leave_team` · `activate_team` · `close_team`
+*   **Reputation:** `rate_user` · `get_reputation`
+
+### Prerequisites
+Install these tools once:
+```powershell
+# 1. Install Rust
+winget install --id Rustlang.Rust.MSVC -e
+
+# 2. Add WASM target (run after Rust installs — open a NEW terminal)
+rustup target add wasm32v1-none
+
+# 3. Install Soroban CLI
+cargo install --locked soroban-cli
+```
+
+### Build & Deploy
+```powershell
+# From the project root
+cd contracts
+
+# Build the contract
+cargo build --target wasm32v1-none --release
+
+# Run Tests
+cargo test
+
+# Deploy to Stellar Testnet (after generating & funding 'deployer' keys)
+soroban contract deploy \
+  --wasm target/wasm32v1-none/release/skill_swap.wasm \
+  --source deployer \
+  --network testnet
+```
+
+### Frontend Integration
+The JS client at `src/services/contract.js` provides a clean API to interact with the contract:
+
+```js
+import { createContractClient } from './services/contract';
+
+// After user connects Freighter:
+const contract = createContractClient(user.wallet_address);
+
+// Book a mentor session (transfers 10 XLM to escrow)
+const sessionId = await contract.bookSession(mentorWalletAddress, 10);
+
+// Join a team (stakes XLM automatically)
+await contract.joinTeam(teamId);
+```
+
+---
+
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/soumyaditya-7/Skillswap-x-XLM/issues).
