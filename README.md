@@ -1,15 +1,47 @@
-# ⚡ Skill Swap - Decentralized Skill Exchange & Learning Marketplace
+<div align="center">
 
-![Skill Swap Banner](https://placehold.co/1200x400/1e1e2f/818cf8?text=Skill+Swap+-+Learn,+Earn,+Grow)
+<img src="./screenshots/banner.png" alt="Skill Swap Banner" width="100%" />
 
-[![CI/CD Pipeline](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml)
-[![Vercel Deploy](https://img.shields.io/badge/Vercel-Deployed-brightgreen?logo=vercel&logoColor=white)](https://skillswap-x-xlm-o4e5.vercel.app/)
-[![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-6366f1?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-20-green?logo=node.js&logoColor=white)](https://nodejs.org)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
+<h1>⚡ Skill Swap</h1>
+<h3><em>Decentralized Skill Exchange &amp; Learning Marketplace on Stellar</em></h3>
 
-Skill Swap is a Web3 platform built on the Stellar network where users can exchange skills peer-to-peer, learn from professionals using XLM, and form project teams with stake-based commitments.
+<p>
+  <!-- CI/CD -->
+  <a href="https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml">
+    <img src="https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI/CD Pipeline" />
+  </a>
+  &nbsp;
+  <!-- Deployment -->
+  <a href="https://skillswap-x-xlm-o4e5.vercel.app/">
+    <img src="https://img.shields.io/badge/Vercel-Live%20Demo-brightgreen?style=flat&logo=vercel&logoColor=white" alt="Vercel Deploy" />
+  </a>
+  &nbsp;
+  <!-- Stellar -->
+  <a href="https://stellar.expert/explorer/testnet/contract/CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS">
+    <img src="https://img.shields.io/badge/Stellar-Testnet-6366f1?style=flat&logo=stellar&logoColor=white" alt="Stellar Testnet" />
+  </a>
+</p>
+
+<p>
+  <!-- Stack -->
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black" alt="React" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Node.js-20-339933?style=flat&logo=node.js&logoColor=white" alt="Node.js" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/PostgreSQL-Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white" alt="Supabase" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/Rust-Soroban-CE422B?style=flat&logo=rust&logoColor=white" alt="Rust" />
+  &nbsp;
+  <img src="https://img.shields.io/badge/License-MIT-f59e0b?style=flat" alt="License MIT" />
+</p>
+
+<p><strong>A Web3 platform where users exchange skills peer-to-peer, learn from professionals with XLM, and form teams with stake-based commitments — all on the Stellar network.</strong></p>
+
+</div>
+
+
 
 ## 🔗 Links & Submissions (Stellar Black Belt)
 
