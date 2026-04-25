@@ -2,7 +2,7 @@
 
 ![Skill Swap Banner](https://placehold.co/1200x400/1e1e2f/818cf8?text=Skill+Swap+-+Learn,+Earn,+Grow)
 
-[![CI/CD Pipeline](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml/badge.svg)](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml)
 [![Vercel Deploy](https://img.shields.io/badge/Vercel-Deployed-brightgreen?logo=vercel&logoColor=white)](https://skillswap-x-xlm-o4e5.vercel.app/)
 [![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-6366f1?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
