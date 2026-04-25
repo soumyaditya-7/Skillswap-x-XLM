@@ -10,6 +10,7 @@ import SkillExchangePage from './pages/SkillExchangePage';
 import LearnPage         from './pages/LearnPage';
 import TeamFormationPage from './pages/TeamFormationPage';
 import ProfilePage       from './pages/ProfilePage';
+import Footer            from './components/Footer';
 import { getToken, clearToken, usersAPI } from './services/api';
 
 const App = () => {
@@ -78,6 +79,8 @@ const App = () => {
         {/* Fallback */}
         <Route path="*"          element={<Navigate to="/" replace />} />
       </Routes>
+
+      <Footer />
 
       {/* Vercel Web Analytics - tracks page views & DAU automatically */}
       <Analytics />
