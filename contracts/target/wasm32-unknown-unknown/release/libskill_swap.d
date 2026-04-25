@@ -1,1 +1,0 @@
-C:\Users\Soumyaditya\Desktop\my\ project\skill\ swap\contracts\target\wasm32-unknown-unknown\release\libskill_swap.rlib: C:\Users\Soumyaditya\Desktop\my\ project\skill\ swap\contracts\skill_swap\src\lib.rs
