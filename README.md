@@ -2,6 +2,13 @@
 
 ![Skill Swap Banner](https://placehold.co/1200x400/1e1e2f/818cf8?text=Skill+Swap+-+Learn,+Earn,+Grow)
 
+[![CI/CD Pipeline](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml/badge.svg)](https://github.com/soumyaditya-7/Skillswap-x-XLM/actions/workflows/ci.yml)
+[![Vercel Deploy](https://img.shields.io/badge/Vercel-Deployed-brightgreen?logo=vercel&logoColor=white)](https://skillswap-x-xlm-o4e5.vercel.app/)
+[![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-6366f1?logo=stellar&logoColor=white)](https://stellar.expert/explorer/testnet/contract/CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20-green?logo=node.js&logoColor=white)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
+
 Skill Swap is a Web3 platform built on the Stellar network where users can exchange skills peer-to-peer, learn from professionals using XLM, and form project teams with stake-based commitments.
 
 ## 🔗 Links & Submissions (Stellar Black Belt)
@@ -27,6 +34,26 @@ Here are the Stellar Testnet wallet addresses of our beta testers who successful
 8.  `GCL6D4RWFZT3HY2HQ4U7EKDRI25HH2DHTSJAQVBS3BRGISSMPXSGK5C6`
 9.  `GAGHYKHOUYNBLVDESRS4D7O3MV5HSJRWWHA74S5RJZ6YI5FKTYCN5BSR`
 10. `GCFIC4UM4K2JGTPZVG4KM4KVEMSY6YFR7DBVUSVMSQAPKYVKMKV5WPSC`
+11. `GAV5K3SCWIOMVXJ5BWIBMVJQOITFL3WDV5ZGKCRSJGEMY2YF47USIY7D`
+12. `GBCDEFGZO5L6VVJX45A33WEIWJZXBJH5ZKIVD5SL6UOZ53SGQ7GG3TXO`
+13. `
+14.
+15.
+16.
+17.
+18.
+19.
+20.
+21.
+22.
+23.
+24.
+25.
+26.
+27.
+28.
+29.
+30.
 
 *(All addresses are verifiable on the Stellar Testnet Explorer).*
 
