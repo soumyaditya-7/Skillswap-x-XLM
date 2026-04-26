@@ -68,24 +68,6 @@ Here are the Stellar Testnet wallet addresses of our beta testers who successful
 10. `GCFIC4UM4K2JGTPZVG4KM4KVEMSY6YFR7DBVUSVMSQAPKYVKMKV5WPSC`
 11. `GAV5K3SCWIOMVXJ5BWIBMVJQOITFL3WDV5ZGKCRSJGEMY2YF47USIY7D`
 12. `GBCDEFGZO5L6VVJX45A33WEIWJZXBJH5ZKIVD5SL6UOZ53SGQ7GG3TXO`
-13. `
-14.
-15.
-16.
-17.
-18.
-19.
-20.
-21.
-22.
-23.
-24.
-25.
-26.
-27.
-28.
-29.
-30.
 
 *(All addresses are verifiable on the Stellar Testnet Explorer).*
 
@@ -114,6 +96,11 @@ Based on the feedback from User D, we enhanced the Team Formation experience:
 Based on the feedback from User E, we fixed the empty state handling on the Skill Exchange marketplace:
 *   **Improvement:** Implemented a graceful fallback mechanism that dynamically injects high-quality mock exchange requests when the database is empty or unresponsive, completely eliminating the infinite loading bug and improving initial user onboarding.
 *   **Commit Link:** [View Commit 969b3be](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/969b3be)
+
+### Next Phase Improvements (Planned)
+Based on overall feedback, users requested advanced filtering and notifications.
+*   **Improvement Plan:** In Phase 5, we will implement advanced skill category filtering (Beginner, Intermediate, Advanced) and real-time Web3 notifications for exchange requests.
+*   **Commit Link:** [View Commit b5112c8](https://github.com/soumyaditya-7/Skillswap-x-XLM/commit/b5112c8) (Added TODOs for Phase 5 features)
 
 ---
 
