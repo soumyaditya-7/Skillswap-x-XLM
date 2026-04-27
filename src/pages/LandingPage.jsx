@@ -173,7 +173,7 @@ const LandingPage = ({ onConnectClick }) => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
-                  className="glass-card p-6 border border-border/50 bg-secondary/20"
+                  className="glass-card p-6 border border-white/10 bg-secondary/20"
                 >
                   <span className="text-sm font-mono text-brand-500 font-bold mb-2 block">{num}</span>
                   <h4 className="text-lg font-bold text-foreground mb-2 font-outfit">{title}</h4>
@@ -185,7 +185,7 @@ const LandingPage = ({ onConnectClick }) => {
         </section>
 
         {/* ── 4. TRUST / WEB3 SECTION ───────────────────────────────────────── */}
-        <section className="w-full max-w-6xl mx-auto mb-32 py-16 px-8 rounded-3xl bg-secondary/30 border border-border/50 relative overflow-hidden">
+        <section className="w-full max-w-6xl mx-auto mb-32 py-16 px-8 rounded-3xl bg-secondary/30 border border-white/10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-brand-500/10 blur-[100px] rounded-full pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none"></div>
           

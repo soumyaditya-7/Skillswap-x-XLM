@@ -52,7 +52,7 @@
 *   **Feedback Data (Excel):** [View Feedback Responses](https://docs.google.com/spreadsheets/d/1PJ1PdyjCmBWcgA_T6TkUzU9RchVvqgDoD0JPXHa7css/edit?usp=sharing)
 *   **Feedback Form:** [Google Form Link](https://docs.google.com/forms/d/e/1FAIpQLSeNHJMRW0xsQzJvtutOWCbO0DSA3ueBNLVgp35plzA2AV_tXw/viewform?usp=publish-editor)
 
-## 👥 5+ Real Testnet Users (Validation)
+## 👥 Real Testnet Users (Validation)
 
 Here are the Stellar Testnet wallet addresses of our beta testers who successfully interacted with the MVP:
 
