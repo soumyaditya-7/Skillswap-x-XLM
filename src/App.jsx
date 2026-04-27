@@ -12,6 +12,7 @@ import TeamFormationPage from './pages/TeamFormationPage';
 import ProfilePage       from './pages/ProfilePage';
 import Footer            from './components/Footer';
 import NoiseOverlay      from './components/NoiseOverlay';
+import ParticlesBackground from './components/ParticlesBackground';
 import Sidebar           from './components/Sidebar';
 import { getToken, clearToken, usersAPI } from './services/api';
 import { useLocation } from 'react-router-dom';
@@ -50,6 +51,7 @@ const AppContent = () => {
 
   return (
     <>
+      <ParticlesBackground />
       <NoiseOverlay />
       
       {/* Conditionally render Navbar/Footer based on route */}
