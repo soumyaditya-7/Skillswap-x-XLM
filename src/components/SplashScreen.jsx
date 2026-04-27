@@ -2,18 +2,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useMemo } from 'react';
 import { CircleDollarSign, Bitcoin, Coins } from 'lucide-react';
 
+// Generate random coin data outside the component to avoid ESLint purity warnings
+const coins = Array.from({ length: 15 }).map((_, i) => ({
+  id: i,
+  x: Math.random() * 100, // percentage across width
+  delay: Math.random() * 2, // delay up to 2 seconds
+  duration: 1.5 + Math.random() * 2, // fall duration 1.5 - 3.5s
+  scale: 0.5 + Math.random() * 1, // scale 0.5 - 1.5
+  icon: [CircleDollarSign, Bitcoin, Coins][Math.floor(Math.random() * 3)],
+}));
+
 const SplashScreen = ({ onComplete }) => {
-  // Generate random coin data once
-  const coins = useMemo(() => {
-    return Array.from({ length: 15 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100, // percentage across width
-      delay: Math.random() * 2, // delay up to 2 seconds
-      duration: 1.5 + Math.random() * 2, // fall duration 1.5 - 3.5s
-      scale: 0.5 + Math.random() * 1, // scale 0.5 - 1.5
-      icon: [CircleDollarSign, Bitcoin, Coins][Math.floor(Math.random() * 3)],
-    }));
-  }, []);
   useEffect(() => {
     // Automatically trigger completion after the animation sequence finishes
     const timer = setTimeout(() => {
