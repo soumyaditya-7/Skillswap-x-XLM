@@ -1,313 +1,266 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Wallet, Zap, Users, BookOpen, Shield, Star, Globe, Lock, ChevronRight } from 'lucide-react';
+import { Wallet, Zap, BookOpen, Users, ArrowRight, Shield, Star, Lock, CheckCircle2, MessageSquare } from 'lucide-react';
 import Tilt from 'react-parallax-tilt';
 import BgBlobs from '../components/BgBlobs';
 
 const features = [
-  { icon: Zap,      title: 'Skill Exchange',   desc: 'Swap skills peer-to-peer, completely free.' },
-  { icon: BookOpen, title: 'Learn from Pros',   desc: 'Book paid sessions with verified experts.' },
-  { icon: Users,    title: 'Team Formation',    desc: 'Build project teams with stake-based commitment.' },
-  { icon: Shield,   title: 'Reputation System', desc: 'On-chain ratings you own forever.' },
-];
-
-const pillars = [
-  {
-    icon: Globe,
-    color: 'from-violet-500 to-indigo-500',
-    glow: '#6366f1',
-    title: 'Open & Permissionless',
-    desc: 'No central authority controls who can participate. Your skills, your terms. Anyone with a Stellar wallet can join instantly — no KYC, no gatekeeping.',
+  { 
+    icon: Zap,      
+    title: 'Skill Exchange',   
+    desc: 'Trade skills peer-to-peer for free. Example: Coding ↔ Guitar.',
+    color: 'from-blue-500 to-cyan-400'
   },
-  {
-    icon: Star,
-    color: 'from-amber-400 to-orange-500',
-    glow: '#f59e0b',
-    title: 'Reputation You Own',
-    desc: 'Every rating, review, and completed swap is anchored to your on-chain identity. Your reputation is portable, permanent, and tamper-proof.',
+  { 
+    icon: BookOpen, 
+    title: 'Learn from Professionals',   
+    desc: 'Book paid sessions with verified mentors using XLM.',
+    color: 'from-purple-500 to-indigo-500'
   },
-  {
-    icon: Lock,
-    color: 'from-teal-400 to-cyan-500',
-    glow: '#06b6d4',
-    title: 'Trustless by Design',
-    desc: 'Smart contracts on Stellar hold escrow funds and enforce agreements automatically. No middlemen, no chargebacks — just code and consensus.',
+  { 
+    icon: Users,    
+    title: 'Project Teams',    
+    desc: 'Join hackathon/project teams with stake-based commitment.',
+    color: 'from-emerald-400 to-teal-500'
   },
 ];
 
-const steps = [
-  { num: '01', title: 'Connect Wallet',  desc: 'Sign in with Freighter — no email or password needed.' },
-  { num: '02', title: 'Post Your Skills', desc: 'List what you offer and what you want in return.' },
-  { num: '03', title: 'Match & Transact', desc: 'Find a match, agree terms, and let the contract handle the rest.' },
-  { num: '04', title: 'Build Your Rep',   desc: 'Rate each other on-chain and grow your decentralized portfolio.' },
+const timelineSteps = [
+  { num: '01', title: 'Create Profile', desc: 'Connect wallet & set identity.' },
+  { num: '02', title: 'Add Skills', desc: 'List what you know & what you want to learn.' },
+  { num: '03', title: 'Match & Hire', desc: 'Find your perfect peer or professional mentor.' },
+  { num: '04', title: 'Grow Reputation', desc: 'Earn on-chain ratings after every successful swap.' },
+];
+
+const trustFeatures = [
+  { icon: Wallet, title: 'Wallet Login', desc: 'No passwords. Your keys, your identity.' },
+  { icon: Lock, title: 'Smart Contracts', desc: 'Escrow ensures fair and trustless swaps.' },
+  { icon: Shield, title: 'Secure Payments', desc: 'Instant XLM settlements globally.' },
+  { icon: Star, title: 'Transparent Reputation', desc: 'Immutable reviews on the Stellar network.' },
+];
+
+const testimonials = [
+  {
+    name: 'Alex D.',
+    role: 'Frontend Developer',
+    text: 'SkillSwap allowed me to trade my React knowledge for Spanish lessons. The smart contract escrow made it completely stress-free.',
+    avatar: 'https://i.pravatar.cc/150?img=11'
+  },
+  {
+    name: 'Sarah M.',
+    role: 'UI/UX Designer',
+    text: 'I booked a mentor to learn Framer Motion. Paid seamlessly in XLM and the video session was incredibly high quality.',
+    avatar: 'https://i.pravatar.cc/150?img=5'
+  },
+  {
+    name: 'David K.',
+    role: 'Smart Contract Auditor',
+    text: 'Formed a hackathon team by staking XLM. Everyone actually showed up and delivered because of the financial commitment!',
+    avatar: 'https://i.pravatar.cc/150?img=33'
+  }
 ];
 
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
+  show: { transition: { staggerChildren: 0.1 } },
 };
 const item = {
-  hidden: { opacity: 0, y: 30 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
 const LandingPage = ({ onConnectClick }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper font-sans text-foreground">
       <BgBlobs />
 
-      <main className="relative z-10 flex flex-col items-center text-center pt-36 pb-24 px-6">
+      <main className="relative z-10 flex flex-col items-center pt-32 pb-24 px-6 w-full overflow-hidden">
 
-        {/* ── HERO ─────────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="tag mb-6"
-        >
-          🚀 Decentralized Skill Exchange · Powered by XLM
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.1 }}
-          style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
-          className="text-5xl md:text-7xl font-extrabold text-white leading-tight max-w-4xl tracking-tight"
-        >
-          Exchange Skills.{' '}
-          <span className="bg-gradient-to-r from-brand-400 to-accent bg-clip-text text-transparent">
-            Grow Together.
-          </span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.25 }}
-          className="mt-6 text-lg text-slate-400 max-w-xl leading-relaxed"
-        >
-          A Web3 marketplace to swap skills for free, learn from professionals,
-          and build teams — all with decentralized trust.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.38 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <button onClick={() => navigate('/exchange')} className="btn-primary text-base px-8 py-3.5">
-            Get Started <ArrowRight size={18} />
-          </button>
-          <button onClick={onConnectClick} className="btn-outline text-base px-8 py-3.5">
-            <Wallet size={18} /> Connect Wallet
-          </button>
-        </motion.div>
-
-        {/* Floating skill chips */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="mt-20 flex flex-wrap justify-center gap-3 max-w-2xl"
-        >
-          {['React', 'Solidity', 'Design', 'Python', 'Marketing', 'Figma', 'Node.js', 'Blockchain'].map((s, i) => (
-            <motion.span
-              key={s}
-              className="tag animate-float cursor-default"
-              style={{ animationDelay: `${i * 0.4}s` }}
-              whileHover={{ scale: 1.1 }}
-            >
-              {s}
-            </motion.span>
-          ))}
-        </motion.div>
-
-        {/* Feature cards */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          className="mt-28 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl w-full text-left"
-        >
-          {features.map(({ icon: Icon, title, desc }) => (
-            <Tilt key={title} tiltMaxAngleX={6} tiltMaxAngleY={6} scale={1.03} transitionSpeed={2000} gyroscope={false}>
-              <motion.div
-                variants={item}
-                className="glass-card-glow p-6 cursor-default h-full"
-              >
-                <div className="w-10 h-10 rounded-xl bg-brand-600/20 flex items-center justify-center mb-4">
-                  <Icon size={20} className="text-brand-400" />
-                </div>
-                <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="font-semibold text-white mb-1 text-lg">{title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
-              </motion.div>
-            </Tilt>
-          ))}
-        </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-24 grid grid-cols-3 gap-10 text-center"
-        >
-          {[['1,200+', 'Skills Listed'], ['840+', 'Swaps Done'], ['320+', 'Teams Formed']].map(([val, label]) => (
-            <div key={label}>
-              <p style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-4xl font-extrabold bg-gradient-to-r from-brand-400 to-accent bg-clip-text text-transparent">{val}</p>
-              <p className="text-sm text-slate-400 mt-1">{label}</p>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* ── ABOUT SECTION ─────────────────────────────────────────── */}
-        <section className="mt-36 w-full max-w-5xl text-left" id="about">
-
-          {/* Section header */}
+        {/* ── 1. HERO SECTION ─────────────────────────────────────────────────── */}
+        <section className="flex flex-col items-center text-center max-w-5xl mx-auto mb-32">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/80 border border-border text-xs font-medium text-muted-foreground mb-8 backdrop-blur-md"
           >
-            <span className="tag mb-4 inline-block">✦ About Skill Swap</span>
-            <h2 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
-              Built for the{' '}
-              <span className="bg-gradient-to-r from-brand-400 to-accent bg-clip-text text-transparent">
-                New Economy
-              </span>
-            </h2>
-            <p className="mt-4 text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
-              Skill Swap reimagines how people learn and collaborate. Instead of paying platforms,
-              you pay each other — directly, transparently, and without borders.
-            </p>
+            <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+            SkillSwap V2 is now live on Stellar Testnet
           </motion.div>
 
-          {/* Mission statement card */}
-          <motion.div
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65 }}
-            className="glass-card-glow p-10 mb-10 relative"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="text-6xl md:text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 tracking-tight font-outfit mb-6 leading-[1.1]"
           >
-            <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-brand-600/10 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-16 -right-16 w-56 h-56 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-            <p style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-xl md:text-2xl font-semibold text-white leading-relaxed relative z-10">
-              "We believe your skills are your most valuable asset.{' '}
-              <span className="text-brand-400">Skill Swap</span> gives you a peer-to-peer marketplace
-              to trade knowledge, earn XLM, and build real connections — governed by smart contracts,
-              not corporations."
-            </p>
-            <div className="mt-6 flex items-center gap-3 relative z-10">
-              <div className="w-8 h-0.5 bg-gradient-to-r from-brand-400 to-transparent" />
-              <span className="text-sm text-slate-500">The Skill Swap Mission</span>
-            </div>
-          </motion.div>
+            Learn. Teach.<br />Build. Earn.
+          </motion.h1>
 
-          {/* Three pillars */}
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.15 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-20"
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            className="text-xl md:text-2xl text-muted-foreground max-w-3xl leading-relaxed mb-10"
           >
-            {pillars.map(({ icon: Icon, color, title, desc }) => (
-              <Tilt key={title} tiltMaxAngleX={5} tiltMaxAngleY={5} scale={1.02} transitionSpeed={2500} gyroscope={false}>
-                <motion.div
-                  variants={item}
-                  className="glass-card-glow p-7 cursor-default group h-full"
-                >
-                  <div
-                    className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <Icon size={22} className="text-white" />
-                  </div>
-                  <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-lg font-bold text-white mb-2">{title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
-                </motion.div>
-              </Tilt>
-            ))}
-          </motion.div>
-
-          {/* How It Works */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <span className="tag mb-4 inline-block">⚡ How It Works</span>
-            <h2 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              From Wallet to Skill — in 4 Steps
-            </h2>
-          </motion.div>
+            The decentralized platform where people exchange skills, learn from experts, 
+            and form project teams using Web3 trust.
+          </motion.p>
 
           <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.15 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-4"
           >
-            {steps.map(({ num, title, desc }, idx) => (
-              <Tilt key={num} tiltMaxAngleX={4} tiltMaxAngleY={4} scale={1.02} transitionSpeed={2000} gyroscope={false}>
-                <motion.div
-                  variants={item}
-                  className="glass-card p-6 relative group cursor-default h-full"
-                >
-                  {idx < steps.length - 1 && (
-                    <ChevronRight
-                      size={16}
-                      className="absolute -right-3 top-1/2 -translate-y-1/2 text-brand-500/50 hidden lg:block"
-                    />
-                  )}
-                  <span style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-4xl font-black bg-gradient-to-br from-brand-400 to-accent bg-clip-text text-transparent leading-none mb-4 block">
-                    {num}
-                  </span>
-                  <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="font-bold text-white mb-1">{title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
-                </motion.div>
-              </Tilt>
-            ))}
+            <button onClick={() => navigate('/exchange')} className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-foreground text-background font-semibold text-base hover:bg-foreground/90 transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_40px_rgba(255,255,255,0.25)]">
+              Get Started <ArrowRight size={18} />
+            </button>
+            <button onClick={onConnectClick} className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-secondary text-foreground border border-border font-semibold text-base hover:bg-secondary/80 transition-all">
+              <Wallet size={18} className="text-brand-400" /> Connect Wallet
+            </button>
           </motion.div>
-
-          {/* Closing CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65 }}
-            className="mt-16 glass-card p-10 text-center relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-600/10 via-transparent to-cyan-500/10 pointer-events-none rounded-2xl" />
-            <h3 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }} className="text-2xl md:text-3xl font-extrabold text-white mb-3 relative z-10 tracking-tight">
-              Ready to swap your first skill?
-            </h3>
-            <p className="text-slate-400 mb-7 relative z-10 max-w-md mx-auto">
-              Join thousands of learners and builders already on the Skill Swap network.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 relative z-10">
-              <button onClick={() => navigate('/exchange')} className="btn-primary text-base px-8 py-3.5">
-                Start Swapping <ArrowRight size={18} />
-              </button>
-              <button onClick={onConnectClick} className="btn-outline text-base px-8 py-3.5">
-                <Wallet size={18} /> Connect Wallet
-              </button>
-            </div>
-          </motion.div>
-
         </section>
-        {/* ── END ABOUT ─────────────────────────────────────────────── */}
+
+        {/* ── 2. CORE FEATURES SECTION ────────────────────────────────────────── */}
+        <section className="w-full max-w-6xl mx-auto mb-32">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold font-outfit tracking-tight mb-4 text-foreground">A unified platform for growth</h2>
+            <p className="text-muted-foreground text-lg">Everything you need to level up your career, powered by smart contracts.</p>
+          </div>
+
+          <motion.div
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {features.map(({ icon: Icon, title, desc, color }) => (
+              <Tilt key={title} tiltMaxAngleX={4} tiltMaxAngleY={4} scale={1.02} transitionSpeed={2000} gyroscope={false}>
+                <motion.div variants={item} className="glass-card-glow p-8 h-full flex flex-col group text-left">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center mb-6 shadow-lg`}>
+                    <Icon size={28} className="text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold font-outfit text-foreground mb-3">{title}</h3>
+                  <p className="text-muted-foreground leading-relaxed flex-grow">{desc}</p>
+                </motion.div>
+              </Tilt>
+            ))}
+          </motion.div>
+        </section>
+
+        {/* ── 3. HOW IT WORKS (Timeline UI) ─────────────────────────────────── */}
+        <section className="w-full max-w-5xl mx-auto mb-32">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="md:w-1/3 text-left">
+              <h2 className="text-3xl md:text-5xl font-bold font-outfit tracking-tight mb-6">How it works</h2>
+              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                SkillSwap replaces traditional platform fees with a peer-to-peer network. Here's how you get started in minutes.
+              </p>
+              <button onClick={() => navigate('/exchange')} className="inline-flex items-center gap-2 text-brand-400 font-semibold hover:text-brand-300 transition-colors">
+                Explore the marketplace <ArrowRight size={16} />
+              </button>
+            </div>
+
+            <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {timelineSteps.map(({ num, title, desc }, idx) => (
+                <motion.div 
+                  key={num}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  className="glass-card p-6 border border-border/50 bg-secondary/20"
+                >
+                  <span className="text-sm font-mono text-brand-500 font-bold mb-2 block">{num}</span>
+                  <h4 className="text-lg font-bold text-foreground mb-2 font-outfit">{title}</h4>
+                  <p className="text-sm text-muted-foreground">{desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 4. TRUST / WEB3 SECTION ───────────────────────────────────────── */}
+        <section className="w-full max-w-6xl mx-auto mb-32 py-16 px-8 rounded-3xl bg-secondary/30 border border-border/50 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+          
+          <div className="text-center relative z-10 mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold font-outfit tracking-tight mb-4">Web3 Trust Layer</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">No middlemen. No corporate overlords. Just code ensuring you get exactly what was agreed upon.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+            {trustFeatures.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="text-center flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full bg-background border border-border flex items-center justify-center mb-6">
+                  <Icon size={24} className="text-foreground" />
+                </div>
+                <h4 className="text-lg font-bold font-outfit text-foreground mb-2">{title}</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── 5. STATS SECTION ──────────────────────────────────────────────── */}
+        <section className="w-full max-w-5xl mx-auto mb-32 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            {[
+              { val: '10K+', label: 'Skills Shared' },
+              { val: '2K+', label: 'Verified Mentors' },
+              { val: '500+', label: 'Teams Formed' },
+              { val: '99%', label: 'Trust Score' },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6"
+              >
+                <div className="text-4xl md:text-6xl font-extrabold font-outfit text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-cyan-400 mb-2">{stat.val}</div>
+                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── 6. TESTIMONIALS ───────────────────────────────────────────────── */}
+        <section className="w-full max-w-6xl mx-auto mb-20">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold font-outfit tracking-tight mb-4">Loved by builders</h2>
+            <p className="text-muted-foreground text-lg">See what the community is saying about SkillSwap.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((test, i) => (
+              <motion.div
+                key={test.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="glass-card p-8 flex flex-col justify-between"
+              >
+                <MessageSquare className="text-brand-500/40 mb-6" size={32} />
+                <p className="text-foreground leading-relaxed mb-8 italic">"{test.text}"</p>
+                <div className="flex items-center gap-4">
+                  <img src={test.avatar} alt={test.name} className="w-12 h-12 rounded-full border border-border" />
+                  <div>
+                    <h4 className="font-bold text-foreground font-outfit">{test.name}</h4>
+                    <p className="text-xs text-muted-foreground">{test.role}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
       </main>
     </div>

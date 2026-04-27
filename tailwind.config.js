@@ -7,22 +7,44 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: '#09090b',
+        foreground: '#fafafa',
+        card: {
+          DEFAULT: '#09090b',
+          foreground: '#fafafa',
+        },
+        popover: {
+          DEFAULT: '#09090b',
+          foreground: '#fafafa',
+        },
+        primary: {
+          DEFAULT: '#fafafa',
+          foreground: '#18181b',
+        },
+        secondary: {
+          DEFAULT: '#27272a',
+          foreground: '#fafafa',
+        },
+        muted: {
+          DEFAULT: '#27272a',
+          foreground: '#a1a1aa',
+        },
+        accent: {
+          DEFAULT: '#27272a',
+          foreground: '#fafafa',
+        },
+        destructive: {
+          DEFAULT: '#7f1d1d',
+          foreground: '#fafafa',
+        },
+        border: '#27272a',
+        input: '#27272a',
+        ring: '#d4d4d8',
         brand: {
-          50:  '#eef2ff',
-          100: '#e0e7ff',
           400: '#818cf8',
           500: '#6366f1',
           600: '#4f46e5',
-          700: '#4338ca',
-          900: '#1e1b4b',
         },
-        surface: {
-          900: '#0d0f1a',
-          800: '#131625',
-          700: '#1a1d30',
-          600: '#222540',
-        },
-        accent: '#a78bfa',
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],

@@ -12,20 +12,22 @@ import TeamFormationPage from './pages/TeamFormationPage';
 import ProfilePage       from './pages/ProfilePage';
 import Footer            from './components/Footer';
 import NoiseOverlay      from './components/NoiseOverlay';
+import Sidebar           from './components/Sidebar';
 import { getToken, clearToken, usersAPI } from './services/api';
+import { useLocation } from 'react-router-dom';
 
-const App = () => {
-  const [user,      setUser]      = useState(null);   // full user object from API
-  const [showAuth,  setShowAuth]  = useState(false);  // open/close AuthModal
-  const [authReady, setAuthReady] = useState(false);  // prevent flicker on load
+const AppContent = () => {
+  const [user,      setUser]      = useState(null);
+  const [showAuth,  setShowAuth]  = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const location = useLocation();
 
-  // ── Re-hydrate session from localStorage token ─────────────
   useEffect(() => {
     const token = getToken();
     if (token) {
       usersAPI.getMe()
         .then(data => setUser(data))
-        .catch(() => clearToken())          // expired / invalid → clear
+        .catch(() => clearToken())
         .finally(() => setAuthReady(true));
     } else {
       setAuthReady(true);
@@ -42,20 +44,27 @@ const App = () => {
     setUser(null);
   };
 
-  // Don't render routes until we've checked token (avoids flash)
   if (!authReady) return null;
 
-  return (
-    <BrowserRouter>
-      <NoiseOverlay />
-      {/* Navbar always visible */}
-      <Navbar
-        user={user}
-        onConnectClick={() => setShowAuth(true)}
-        onLogout={handleLogout}
-      />
+  const isDashboard = location.pathname.startsWith('/dashboard');
 
-      {/* Auth Modal (portal-style overlay) */}
+  return (
+    <>
+      <NoiseOverlay />
+      
+      {/* Conditionally render Navbar/Footer based on route */}
+      {!isDashboard && (
+        <Navbar
+          user={user}
+          onConnectClick={() => setShowAuth(true)}
+          onLogout={handleLogout}
+        />
+      )}
+
+      {isDashboard && (
+        <Sidebar user={user} onLogout={handleLogout} />
+      )}
+
       {showAuth && (
         <AuthModal
           onClose={() => setShowAuth(false)}
@@ -63,31 +72,30 @@ const App = () => {
         />
       )}
 
-      <Routes>
-        {/* Public landing */}
-        <Route path="/"          element={<LandingPage onConnectClick={() => setShowAuth(true)} />} />
+      <div className={isDashboard ? "ml-64 min-h-screen bg-background" : ""}>
+        <Routes>
+          <Route path="/"          element={<LandingPage onConnectClick={() => setShowAuth(true)} />} />
+          <Route path="/dashboard" element={
+            user ? <DashboardPage user={user} /> : <Navigate to="/" replace />
+          } />
+          <Route path="/exchange"  element={<SkillExchangePage user={user} onConnectClick={() => setShowAuth(true)} />} />
+          <Route path="/learn"     element={<LearnPage user={user} onConnectClick={() => setShowAuth(true)} />} />
+          <Route path="/teams"     element={<TeamFormationPage user={user} onConnectClick={() => setShowAuth(true)} />} />
+          <Route path="/profile"   element={<ProfilePage user={user} onConnectClick={() => setShowAuth(true)} />} />
+          <Route path="*"          element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
 
-        {/* Protected dashboard — redirect to landing if not logged in */}
-        <Route path="/dashboard" element={
-          user ? <DashboardPage user={user} /> : <Navigate to="/" replace />
-        } />
+      {!isDashboard && <Footer />}
+    </>
+  );
+};
 
-        {/* Feature pages — accessible to all */}
-        <Route path="/exchange"  element={<SkillExchangePage user={user} onConnectClick={() => setShowAuth(true)} />} />
-        <Route path="/learn"     element={<LearnPage user={user} onConnectClick={() => setShowAuth(true)} />} />
-        <Route path="/teams"     element={<TeamFormationPage user={user} onConnectClick={() => setShowAuth(true)} />} />
-        <Route path="/profile"   element={<ProfilePage user={user} onConnectClick={() => setShowAuth(true)} />} />
-
-        {/* Fallback */}
-        <Route path="*"          element={<Navigate to="/" replace />} />
-      </Routes>
-
-      <Footer />
-
-      {/* Vercel Web Analytics - tracks page views & DAU automatically */}
+const App = () => {
+  return (
+    <BrowserRouter>
+      <AppContent />
       <Analytics />
-
-      {/* Vercel Speed Insights - tracks Core Web Vitals & performance */}
       <SpeedInsights />
     </BrowserRouter>
   );
