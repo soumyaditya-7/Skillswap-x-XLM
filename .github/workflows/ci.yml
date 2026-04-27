@@ -83,7 +83,7 @@ jobs:
       - name: 🦀 Install Rust stable toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: wasm32v1-none
+          targets: wasm32-unknown-unknown
 
       - name: 🔐 Cache Cargo registry
         uses: actions/cache@v4
@@ -98,7 +98,7 @@ jobs:
 
       - name: 🏗️ Build Soroban contract (WASM)
         working-directory: ./contracts
-        run: cargo build --target wasm32v1-none --release
+        run: cargo build --target wasm32-unknown-unknown --release
 
       - name: 🧪 Run contract tests
         working-directory: ./contracts
