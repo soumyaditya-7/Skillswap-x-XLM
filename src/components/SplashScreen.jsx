@@ -75,7 +75,7 @@ const SplashScreen = ({ onComplete }) => {
         <motion.img
           src="/skillswap-logo.png"
           alt="SkillSwap Logo"
-          className="h-24 md:h-32 w-auto object-contain relative z-10 drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]"
+          className="h-40 md:h-56 w-auto object-contain relative z-10 drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]"
           animate={{
             y: [0, -10, 0],
           }}
