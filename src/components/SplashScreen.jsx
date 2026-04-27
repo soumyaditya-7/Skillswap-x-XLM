@@ -6,7 +6,7 @@ const SplashScreen = ({ onComplete }) => {
     // Automatically trigger completion after the animation sequence finishes
     const timer = setTimeout(() => {
       onComplete();
-    }, 2800); // 2.8s total duration
+    }, 3800); // 3.8s total duration
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -23,18 +23,18 @@ const SplashScreen = ({ onComplete }) => {
         initial={{ scale: 0.8, opacity: 0, filter: "blur(10px)" }}
         animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
         transition={{
-          duration: 1.2,
+          duration: 1.5,
           ease: "easeOut",
         }}
         className="relative flex flex-col items-center"
       >
         {/* Glow behind the logo */}
         <div className="absolute inset-0 bg-brand-500/20 blur-3xl rounded-full scale-150"></div>
-        
+
         {/* The Logo Image */}
-        <motion.img 
-          src="/skillswap-logo.png" 
-          alt="SkillSwap Logo" 
+        <motion.img
+          src="/skillswap-logo.png"
+          alt="SkillSwap Logo"
           className="h-24 md:h-32 w-auto object-contain relative z-10 drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]"
           animate={{
             y: [0, -10, 0],
@@ -47,7 +47,7 @@ const SplashScreen = ({ onComplete }) => {
         />
 
         {/* Loading / Startup Line */}
-        <motion.div 
+        <motion.div
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: "150px", opacity: 1 }}
           transition={{ delay: 0.8, duration: 1, ease: "easeInOut" }}
