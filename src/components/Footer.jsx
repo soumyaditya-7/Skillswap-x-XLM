@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="w-full bg-[#352f5b] border-t border-white/5 pt-16 pb-8 px-6 mt-auto">
       <div className="max-w-7xl mx-auto flex flex-col gap-16">
-        
+
         {/* Top Section: Trust Indicators */}
         <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 text-sm">
           <div className="flex items-center gap-3">
@@ -16,7 +16,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="hidden sm:block w-px h-8 bg-white/10" />
-          
+
           <div className="flex items-center gap-3">
             <Activity className="w-5 h-5 text-brand-300" />
             <div>
@@ -25,7 +25,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="hidden sm:block w-px h-8 bg-white/10" />
-          
+
           <div className="flex items-center gap-3">
             <Shield className="w-5 h-5 text-brand-300" />
             <div>
@@ -39,7 +39,7 @@ const Footer = () => {
 
         {/* Middle Section: Links & Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-          
+
           {/* Brand Column */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
@@ -48,8 +48,8 @@ const Footer = () => {
               </div>
               <span className="text-xl font-bold text-white tracking-tight">Skill Swap</span>
             </div>
-            <a 
-              href="#about" 
+            <a
+              href="#about"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-brand-200 transition-colors w-fit border border-white/10"
             >
               <span className="text-sm font-medium">About Us</span>
@@ -75,7 +75,7 @@ const Footer = () => {
               </div>
               <div>
                 <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Founder</p>
-                <p className="text-white">MR.Soumyaditya Debnath</p>
+                <p className="text-white">Mr.Soumyaditya Debnath</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-slate-400">
