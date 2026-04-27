@@ -39,7 +39,7 @@ const ParticlesBackground = () => {
             color: "#ffffff",
             distance: 150,
             enable: true,
-            opacity: 0.03,
+            opacity: 0.15,
             width: 1,
           },
           move: {
@@ -52,15 +52,15 @@ const ParticlesBackground = () => {
           },
           number: {
             density: { enable: true, area: 800 },
-            value: 40,
+            value: 80,
           },
           opacity: {
-            value: { min: 0.1, max: 0.3 },
-            animation: { enable: true, speed: 0.5, minimumValue: 0.1 },
+            value: { min: 0.3, max: 0.7 },
+            animation: { enable: true, speed: 0.5, minimumValue: 0.3 },
           },
           shape: { type: "circle" },
           size: {
-            value: { min: 0.5, max: 1.5 },
+            value: { min: 1.5, max: 3 },
           },
         },
         detectRetina: true,
