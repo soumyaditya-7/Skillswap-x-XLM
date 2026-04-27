@@ -1,7 +1,19 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { CircleDollarSign, Bitcoin, Coins } from 'lucide-react';
 
 const SplashScreen = ({ onComplete }) => {
+  // Generate random coin data once
+  const coins = useMemo(() => {
+    return Array.from({ length: 15 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100, // percentage across width
+      delay: Math.random() * 2, // delay up to 2 seconds
+      duration: 1.5 + Math.random() * 2, // fall duration 1.5 - 3.5s
+      scale: 0.5 + Math.random() * 1, // scale 0.5 - 1.5
+      icon: [CircleDollarSign, Bitcoin, Coins][Math.floor(Math.random() * 3)],
+    }));
+  }, []);
   useEffect(() => {
     // Automatically trigger completion after the animation sequence finishes
     const timer = setTimeout(() => {
@@ -17,8 +29,36 @@ const SplashScreen = ({ onComplete }) => {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
-      className="fixed inset-0 z-[9999] bg-[#09090b] flex flex-col items-center justify-center"
+      className="fixed inset-0 z-[9999] bg-[#09090b] flex flex-col items-center justify-center overflow-hidden"
     >
+      {/* Falling Coins Background */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        {coins.map((coin) => {
+          const Icon = coin.icon;
+          return (
+            <motion.div
+              key={coin.id}
+              className="absolute text-brand-400"
+              initial={{ y: -100, x: `${coin.x}vw`, opacity: 0, rotate: 0 }}
+              animate={{ 
+                y: "110vh", 
+                opacity: [0, 1, 1, 0], 
+                rotate: 360 
+              }}
+              transition={{
+                duration: coin.duration,
+                delay: coin.delay,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              style={{ scale: coin.scale }}
+            >
+              <Icon size={32} />
+            </motion.div>
+          );
+        })}
+      </div>
+
       <motion.div
         initial={{ scale: 0.8, opacity: 0, filter: "blur(10px)" }}
         animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
