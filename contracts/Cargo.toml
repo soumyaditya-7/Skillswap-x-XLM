@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["skill_swap"]
+members = ["skill_swap", "skill_swap_v2"]
 
 [profile.release]
 opt-level = "z"
