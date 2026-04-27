@@ -68,7 +68,7 @@
   }
 
   .page-wrapper {
-    @apply min-h-screen bg-background relative overflow-hidden;
+    @apply min-h-screen relative overflow-hidden;
   }
 
   .section-title {
