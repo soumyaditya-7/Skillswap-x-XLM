@@ -79,96 +79,88 @@ const LandingPage = ({ onConnectClick }) => {
       <main className="relative z-10 flex flex-col items-center pt-32 pb-24 px-6 w-full overflow-hidden">
 
         {/* ── 1. HERO SECTION ─────────────────────────────────────────────────── */}
-        <section className="relative flex flex-col md:flex-row items-center justify-between text-left max-w-6xl mx-auto mb-40 w-full min-h-[70vh]">
+        <section className="relative flex flex-col items-center justify-center text-center max-w-5xl mx-auto mb-40 w-full min-h-[70vh] pt-20">
           
-          {/* Left Text Column */}
-          <div className="md:w-1/2 z-10 flex flex-col items-start relative">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60 border border-white/5 text-xs font-semibold text-brand-300 mb-8 backdrop-blur-md shadow-lg"
-            >
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ boxShadow: '0 0 10px #22d3ee' }}></span>
-              SkillSwap V2 is now live on Stellar Testnet
-            </motion.div>
+          {/* Subtle Ambient Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-brand-500/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-6xl md:text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40 tracking-tight font-outfit mb-6 leading-[1.05]"
-            >
-              Swap Skills.<br />
-              <span className="bg-gradient-to-r from-brand-400 to-cyan-400 bg-clip-text text-transparent">Learn. Build. Earn.</span>
-            </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/10 text-xs font-medium text-slate-300 mb-8 backdrop-blur-md"
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]"></span>
+            SkillSwap V2 is live on Stellar
+          </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="text-lg md:text-xl text-slate-400 max-w-lg leading-relaxed mb-10 font-medium"
-            >
-              The decentralized platform where people exchange skills, book expert mentorship, 
-              and build trusted project teams using Web3.
-            </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-5xl md:text-7xl font-bold text-white tracking-[-0.02em] font-outfit mb-6 leading-[1.1] max-w-4xl"
+          >
+            Swap Skills. Learn.<br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-slate-500"> Build. Earn.</span>
+          </motion.h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-wrap items-center gap-4"
-            >
-              <button onClick={() => navigate('/exchange')} className="relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-bold text-base hover:scale-105 transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] z-10 group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-white via-brand-100 to-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <span className="relative z-10 flex items-center gap-2">Get Started <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></span>
-              </button>
-              <button onClick={onConnectClick} className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-secondary/50 text-white border border-white/10 font-semibold text-base hover:bg-white/5 hover:border-white/20 backdrop-blur-md transition-all z-10">
-                <Wallet size={18} className="text-cyan-400" /> Connect Wallet
-              </button>
-            </motion.div>
-          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-lg text-slate-400 max-w-2xl leading-relaxed mb-10 font-normal"
+          >
+            The decentralized platform where top talent exchanges skills, books expert mentorship, 
+            and builds trusted project teams — powered by Web3.
+          </motion.p>
 
-          {/* Right 3D Visual Abstract Element */}
-          <div className="md:w-1/2 absolute md:relative right-0 opacity-20 md:opacity-100 pointer-events-none mt-20 md:mt-0 flex justify-center h-[500px] w-full z-0 perspective-1000">
-             <motion.div 
-               animate={{ 
-                 rotateY: [0, 10, -10, 0],
-                 rotateX: [0, -5, 5, 0],
-                 y: [0, -20, 0]
-               }}
-               transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-               className="relative w-80 h-80"
-             >
-               {/* Glowing Sphere Core */}
-               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand-600/40 to-cyan-400/40 blur-3xl shadow-[0_0_100px_#6366f1]"></div>
-               
-               {/* 3D Glass Cards rotating around */}
-               <motion.div 
-                 animate={{ rotateZ: 360 }} 
-                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                 className="absolute inset-0 w-full h-full"
-               >
-                 <div className="absolute -top-10 -left-10 w-48 h-32 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-xl shadow-2xl p-4 transform -rotate-12">
-                   <div className="flex items-center gap-3 mb-3"><div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center"><Zap size={14} className="text-white"/></div><div className="h-2 w-16 bg-white/20 rounded"></div></div>
-                   <div className="space-y-2"><div className="h-2 w-full bg-white/10 rounded"></div><div className="h-2 w-3/4 bg-white/10 rounded"></div></div>
-                 </div>
-               </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-wrap items-center justify-center gap-4"
+          >
+            <button onClick={() => navigate('/exchange')} className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-black font-medium text-sm hover:bg-slate-200 transition-colors">
+              Get Started <ArrowRight size={16} />
+            </button>
+            <button onClick={onConnectClick} className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-transparent text-white border border-white/20 font-medium text-sm hover:bg-white/5 transition-colors">
+              <Wallet size={16} className="text-slate-400" /> Connect Wallet
+            </button>
+          </motion.div>
 
-               <motion.div 
-                 animate={{ rotateZ: -360 }} 
-                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                 className="absolute inset-0 w-full h-full"
-               >
-                 <div className="absolute top-40 -right-20 w-56 h-40 rounded-2xl border border-cyan-400/30 bg-black/40 backdrop-blur-2xl shadow-[0_0_30px_rgba(6,182,212,0.2)] p-4 transform rotate-12 flex flex-col justify-between">
-                   <div className="flex justify-between items-center"><div className="h-3 w-20 bg-cyan-400/50 rounded"></div><div className="h-3 w-8 bg-green-400/50 rounded"></div></div>
-                   <div className="flex gap-2 items-end h-16">
-                     {[40, 70, 45, 90, 60, 100].map((h, i) => <div key={i} className="w-full bg-gradient-to-t from-cyan-500/20 to-cyan-400/80 rounded-t-sm" style={{ height: `${h}%` }}></div>)}
-                   </div>
-                 </div>
-               </motion.div>
-             </motion.div>
-          </div>
+          {/* Minimalist Dashboard Preview Graphic */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-20 w-full max-w-4xl relative rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl overflow-hidden aspect-[16/9]"
+          >
+            <div className="absolute top-0 w-full h-10 border-b border-white/10 bg-white/[0.02] flex items-center px-4 gap-2">
+              <div className="w-3 h-3 rounded-full bg-white/20"></div>
+              <div className="w-3 h-3 rounded-full bg-white/20"></div>
+              <div className="w-3 h-3 rounded-full bg-white/20"></div>
+            </div>
+            {/* Fake UI Content to look like a real app instead of generic shapes */}
+            <div className="pt-16 p-8 flex gap-6 h-full">
+              <div className="w-48 hidden md:flex flex-col gap-4 border-r border-white/10 pr-6">
+                <div className="h-4 w-24 bg-white/10 rounded mb-4"></div>
+                <div className="h-3 w-full bg-white/5 rounded"></div>
+                <div className="h-3 w-full bg-white/5 rounded"></div>
+                <div className="h-3 w-3/4 bg-white/5 rounded"></div>
+              </div>
+              <div className="flex-1 flex flex-col gap-6">
+                <div className="h-8 w-48 bg-white/10 rounded"></div>
+                <div className="flex gap-4">
+                  <div className="h-32 flex-1 border border-white/10 rounded-xl bg-white/[0.02]"></div>
+                  <div className="h-32 flex-1 border border-white/10 rounded-xl bg-white/[0.02]"></div>
+                  <div className="h-32 flex-1 border border-white/10 rounded-xl bg-white/[0.02]"></div>
+                </div>
+                <div className="h-48 w-full border border-white/10 rounded-xl bg-white/[0.02] mt-2"></div>
+              </div>
+            </div>
+            {/* Gradient overlay to fade bottom */}
+            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#09090b] to-transparent"></div>
+          </motion.div>
         </section>
 
         {/* ── 2. CORE FEATURES SECTION ────────────────────────────────────────── */}
