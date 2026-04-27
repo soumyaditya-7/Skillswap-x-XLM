@@ -128,39 +128,6 @@ const LandingPage = ({ onConnectClick }) => {
             </button>
           </motion.div>
 
-          {/* Minimalist Dashboard Preview Graphic */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-20 w-full max-w-4xl relative rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl overflow-hidden aspect-[16/9]"
-          >
-            <div className="absolute top-0 w-full h-10 border-b border-white/10 bg-white/[0.02] flex items-center px-4 gap-2">
-              <div className="w-3 h-3 rounded-full bg-white/20"></div>
-              <div className="w-3 h-3 rounded-full bg-white/20"></div>
-              <div className="w-3 h-3 rounded-full bg-white/20"></div>
-            </div>
-            {/* Fake UI Content to look like a real app instead of generic shapes */}
-            <div className="pt-16 p-8 flex gap-6 h-full">
-              <div className="w-48 hidden md:flex flex-col gap-4 border-r border-white/10 pr-6">
-                <div className="h-4 w-24 bg-white/10 rounded mb-4"></div>
-                <div className="h-3 w-full bg-white/5 rounded"></div>
-                <div className="h-3 w-full bg-white/5 rounded"></div>
-                <div className="h-3 w-3/4 bg-white/5 rounded"></div>
-              </div>
-              <div className="flex-1 flex flex-col gap-6">
-                <div className="h-8 w-48 bg-white/10 rounded"></div>
-                <div className="flex gap-4">
-                  <div className="h-32 flex-1 border border-white/10 rounded-xl bg-white/[0.02]"></div>
-                  <div className="h-32 flex-1 border border-white/10 rounded-xl bg-white/[0.02]"></div>
-                  <div className="h-32 flex-1 border border-white/10 rounded-xl bg-white/[0.02]"></div>
-                </div>
-                <div className="h-48 w-full border border-white/10 rounded-xl bg-white/[0.02] mt-2"></div>
-              </div>
-            </div>
-            {/* Gradient overlay to fade bottom */}
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#09090b] to-transparent"></div>
-          </motion.div>
         </section>
 
         {/* ── 2. CORE FEATURES SECTION ────────────────────────────────────────── */}
