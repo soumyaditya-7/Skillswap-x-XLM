@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, Zap, BookOpen, Users, ArrowRight, Shield, Star, Lock, CheckCircle2, MessageSquare } from 'lucide-react';
 import Tilt from 'react-parallax-tilt';
-import BgBlobs from '../components/BgBlobs';
 
 const features = [
   { 
@@ -74,7 +73,7 @@ const LandingPage = ({ onConnectClick }) => {
 
   return (
     <div className="page-wrapper font-sans text-foreground">
-      <BgBlobs />
+      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 opacity-20 blur-3xl animate-pulse -z-10 pointer-events-none"></div>
 
       <main className="relative z-10 flex flex-col items-center pt-32 pb-24 px-6 w-full overflow-hidden">
 
