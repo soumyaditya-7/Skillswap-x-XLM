@@ -75,7 +75,7 @@ const Footer = () => {
               </div>
               <div>
                 <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Founder</p>
-                <p className="text-white">Soumyaditya Debnath</p>
+                <p className="text-white">MR.Soumyaditya Debnath</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-slate-400">

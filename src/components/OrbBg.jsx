@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function OrbBg() {
   return (
-    <div className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden pointer-events-none -z-10 fixed">
+    <div className="fixed inset-0 bg-black flex items-center justify-center overflow-hidden pointer-events-none -z-10">
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
