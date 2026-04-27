@@ -194,9 +194,10 @@ SkillSwap uses a **unified single-contract architecture** on the Stellar Soroban
 
 | Property | Value |
 |---|---|
-| **Contract Address** | `Not yet deployed — Mainnet launch planned for Phase 6` |
-| **Network** | Stellar Mainnet (planned) |
+| **Contract Address** | `CBYPMH7I36XASUWCV6P2NDIMQBYD4PBHMEMIX57NODJPC4RSZHG7OGDE` |
+| **Network** | Stellar Testnet |
 | **Language** | Rust (Soroban SDK v21) |
+| **Explorer** | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBYPMH7I36XASUWCV6P2NDIMQBYD4PBHMEMIX57NODJPC4RSZHG7OGDE) |
 | **Source** | [`contracts/skill_swap_v2/src/lib.rs`](./contracts/skill_swap_v2/src/lib.rs) |
 | **Tests** | 5 passing ✅ |
 
