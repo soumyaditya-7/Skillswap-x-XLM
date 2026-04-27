@@ -11,6 +11,7 @@ import LearnPage         from './pages/LearnPage';
 import TeamFormationPage from './pages/TeamFormationPage';
 import ProfilePage       from './pages/ProfilePage';
 import Footer            from './components/Footer';
+import NoiseOverlay      from './components/NoiseOverlay';
 import { getToken, clearToken, usersAPI } from './services/api';
 
 const App = () => {
@@ -46,6 +47,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <NoiseOverlay />
       {/* Navbar always visible */}
       <Navbar
         user={user}
