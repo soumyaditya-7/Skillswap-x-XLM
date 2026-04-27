@@ -160,6 +160,74 @@ The `@vercel/speed-insights` SDK is integrated into `App.jsx` alongside the Anal
 
 ---
 
+## 🦀 Smart Contracts (Soroban on Stellar)
+
+SkillSwap uses a **unified single-contract architecture** on the Stellar Soroban platform. Two versions exist — the current MVP live on testnet, and the advanced production-grade contract planned for mainnet.
+
+---
+
+### 🟢 V1 — Present MVP Contract (`contracts/skill_swap/`)
+
+> **Currently deployed and live on Stellar Testnet.**
+
+| Property | Value |
+|---|---|
+| **Contract Address** | `CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS` |
+| **Network** | Stellar Testnet |
+| **Language** | Rust (Soroban SDK v21) |
+| **Explorer** | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAVV22F2KM6NQRDQK4H3SCO3JSYZU6A4OXTSQ6MPOMU6XADG5GZI5ALS) |
+| **Source** | [`contracts/skill_swap/src/lib.rs`](./contracts/skill_swap/src/lib.rs) |
+| **Tests** | 5 passing ✅ |
+
+**Features:**
+- `list_skill()` / `request_swap()` / `accept_swap()` / `complete_swap()` — Peer-to-peer skill exchange
+- `book_session()` / `confirm_session()` — XLM escrow payment to mentor
+- `dispute_session()` / `resolve_dispute()` — Admin-based dispute resolution
+- `create_team()` / `join_team()` / `leave_team()` — Stake-based team formation
+- `rate_user()` / `get_reputation()` — On-chain star rating system
+
+---
+
+### 🔴 V2 — Advanced Contract (Roadmap) (`contracts/skill_swap_v2/`)
+
+> **Production-grade upgrade. Fully implemented and tested. Pending mainnet deployment.**
+
+| Property | Value |
+|---|---|
+| **Contract Address** | `Not yet deployed — Mainnet launch planned for Phase 6` |
+| **Network** | Stellar Mainnet (planned) |
+| **Language** | Rust (Soroban SDK v21) |
+| **Source** | [`contracts/skill_swap_v2/src/lib.rs`](./contracts/skill_swap_v2/src/lib.rs) |
+| **Tests** | 5 passing ✅ |
+
+**Advanced Features over V1:**
+
+| Feature | V1 | V2 |
+|---|:---:|:---:|
+| Skill swap | ✅ | ✅ |
+| XLM escrow | ✅ | ✅ |
+| Dual escrow (both users stake) | ❌ | ✅ |
+| Deadline-based slashing | ❌ | ✅ |
+| Milestone session payments | ❌ | ✅ |
+| Auto-refund remaining balance | ❌ | ✅ |
+| Team inactivity slashing | ❌ | ✅ |
+| Member check-ins (`mark_active`) | ❌ | ✅ |
+| Signed reputation score (can go negative) | ❌ | ✅ |
+| DAO dispute resolution | ❌ | ✅ |
+
+**Reputation Point System (V2):**
+```
++10  Completed skill swap
++15  Mentorship session completed
+ +5  Learner after full session
+ -20 Abandoned deal / no-show refund triggered
+ -25 Lost dispute
+```
+
+---
+
+
+
 ## 🗂️ Data Indexing
 
 Skill Swap indexes on-chain Stellar data in real-time using the **Stellar Horizon REST API** (`https://horizon-testnet.stellar.org`). This removes the need for a custom indexer while giving us live access to wallet balances, account sequences, and transaction history.
