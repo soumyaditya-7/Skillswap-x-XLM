@@ -3,7 +3,7 @@ import { Shield, Users, Activity, ExternalLink, Mail, User } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-[#352f5b] border-t border-white/5 pt-16 pb-8 px-6 mt-auto">
+    <footer className="w-full bg-transparent backdrop-blur-sm border-t border-white/10 pt-16 pb-8 px-6 mt-auto">
       <div className="max-w-7xl mx-auto flex flex-col gap-16">
 
         {/* Top Section: Trust Indicators */}
