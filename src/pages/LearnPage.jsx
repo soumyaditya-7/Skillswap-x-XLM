@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Star, Clock, BookOpen, CheckCircle, Wallet,
-  ExternalLink, XCircle, Loader2, AlertCircle, Zap
+  ExternalLink, XCircle, Loader2, AlertCircle, Zap, Trash2
 } from 'lucide-react';
 import {
   Networks, TransactionBuilder, Operation, Asset, Memo, Account
@@ -59,6 +59,7 @@ const LearnPage = ({ user, onConnectClick }) => {
   // { pro, status: 'pending'|'signing'|'submitting'|'success'|'error', txHash, error }
   const [txState, setTxState] = useState(null);
   const [bookedSessions, setBookedSessions] = useState([]);
+  const [cancelTarget, setCancelTarget] = useState(null); // pro to cancel
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('bookedSessions') || '[]');
@@ -137,6 +138,18 @@ const LearnPage = ({ user, onConnectClick }) => {
 
   const closeModal = () => setTxState(null);
 
+  // ── Cancel / Opt-out a booked session ────────────────────────
+  const handleCancelSession = (pro) => {
+    setCancelTarget(pro);
+  };
+
+  const confirmCancel = () => {
+    const updated = bookedSessions.filter(b => b.id !== cancelTarget.id);
+    localStorage.setItem('bookedSessions', JSON.stringify(updated));
+    setBookedSessions(updated);
+    setCancelTarget(null);
+  };
+
   return (
     <div className="page-wrapper">
       <BgBlobs />
@@ -204,36 +217,54 @@ const LearnPage = ({ user, onConnectClick }) => {
                 ))}
               </div>
 
+
               {/* Price + CTA */}
-              <div className="mt-auto flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-white">
-                    {pro.price} <span className="text-sm font-normal text-brand-400">XLM</span>
-                  </p>
-                  <p className="text-xs text-slate-500 flex items-center gap-1">
-                    <Clock size={10} /> per hour
-                  </p>
+              <div className="mt-auto">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <p className="text-2xl font-bold text-white">
+                      {pro.price} <span className="text-sm font-normal text-brand-400">XLM</span>
+                    </p>
+                    <p className="text-xs text-slate-500 flex items-center gap-1">
+                      <Clock size={10} /> per hour
+                    </p>
+                  </div>
+                  {bookedSessions.some(b => b.id === pro.id) ? (
+                    <button
+                      onClick={() => window.location.href = '/profile'}
+                      className="btn-outline text-xs px-4 py-2 flex items-center gap-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                    >
+                      <CheckCircle size={13} />
+                      Purchased
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleBookSession(pro)}
+                      className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5
+                                 group-hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all"
+                    >
+                      <Zap size={13} />
+                      {user ? 'Book & Pay XLM' : 'Connect to Book'}
+                    </button>
+                  )}
                 </div>
-                {bookedSessions.some(b => b.id === pro.id) ? (
-                  <button
-                    onClick={() => window.location.href = '/profile'}
-                    className="btn-outline text-xs px-4 py-2 flex items-center gap-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all"
+                {/* Opt-out button — only shown when purchased */}
+                {bookedSessions.some(b => b.id === pro.id) && (
+                  <motion.button
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => handleCancelSession(pro)}
+                    className="w-full flex items-center justify-center gap-1.5 text-xs text-rose-400/60
+                               hover:text-rose-400 hover:bg-rose-500/10 border border-rose-500/20
+                               hover:border-rose-500/40 rounded-xl py-2 mt-1 transition-all duration-200"
                   >
-                    <CheckCircle size={13} />
-                    Purchased
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleBookSession(pro)}
-                    className="btn-primary text-xs px-4 py-2 flex items-center gap-1.5
-                               group-hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-all"
-                  >
-                    <Zap size={13} />
-                    {user ? 'Book & Pay XLM' : 'Connect to Book'}
-                  </button>
+                    <Trash2 size={12} />
+                    Opt Out from this Session
+                  </motion.button>
                 )}
               </div>
             </motion.div>
+
           ))}
         </div>
       </main>
@@ -337,7 +368,57 @@ const LearnPage = ({ user, onConnectClick }) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Cancel / Opt-Out Confirmation Modal ──────────────────── */}
+      <AnimatePresence>
+        {cancelTarget && (
+          <motion.div
+            key="cancel-backdrop"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setCancelTarget(null)}
+          >
+            <motion.div
+              key="cancel-panel"
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="glass-card w-full max-w-sm p-8 text-center"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="mx-auto w-16 h-16 rounded-full bg-rose-500/20 flex items-center justify-center mb-5">
+                <Trash2 size={28} className="text-rose-400" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">Opt Out of Session?</h2>
+              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                You are about to cancel your session with{' '}
+                <strong className="text-white">{cancelTarget.name}</strong>.
+                <br />
+                <span className="text-rose-400/80 text-xs mt-1 block">
+                  Note: XLM payments are on-chain and non-refundable. Only your local session record will be removed.
+                </span>
+              </p>
+              <button
+                onClick={confirmCancel}
+                className="w-full flex items-center justify-center gap-2 bg-rose-500/20 hover:bg-rose-500/30
+                           border border-rose-500/40 text-rose-300 rounded-xl py-3 text-sm font-semibold
+                           transition-all duration-200 mb-3"
+              >
+                <Trash2 size={14} /> Yes, Opt Out
+              </button>
+              <button
+                onClick={() => setCancelTarget(null)}
+                className="btn-outline w-full justify-center text-sm"
+              >
+                Keep Session
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+
   );
 };
 
