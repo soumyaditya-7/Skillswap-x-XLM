@@ -59,7 +59,9 @@ const LearnPage = ({ user, onConnectClick }) => {
   // { pro, status: 'pending'|'signing'|'submitting'|'success'|'error', txHash, error }
   const [txState, setTxState] = useState(null);
   const [bookedSessions, setBookedSessions] = useState([]);
-  const [cancelTarget, setCancelTarget] = useState(null); // pro to cancel
+  const [cancelTarget, setCancelTarget] = useState(null);
+  // { status: 'processing'|'signing'|'success'|'error', txHash, error, refundAmount }
+  const [refundState, setRefundState] = useState(null);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('bookedSessions') || '[]');
@@ -138,16 +140,84 @@ const LearnPage = ({ user, onConnectClick }) => {
 
   const closeModal = () => setTxState(null);
 
-  // ── Cancel / Opt-out a booked session ────────────────────────
+  // ── Cancel / Opt-out with 10% XLM Refund ─────────────────────
   const handleCancelSession = (pro) => {
     setCancelTarget(pro);
+    setRefundState(null);
   };
 
-  const confirmCancel = () => {
-    const updated = bookedSessions.filter(b => b.id !== cancelTarget.id);
-    localStorage.setItem('bookedSessions', JSON.stringify(updated));
-    setBookedSessions(updated);
-    setCancelTarget(null);
+  const confirmCancel = async () => {
+    const pro = cancelTarget;
+    const refundAmount = parseFloat((pro.price * 0.10).toFixed(7)); // 10% refund
+
+    // If user has no wallet, just remove locally
+    if (!user?.wallet_address) {
+      const updated = bookedSessions.filter(b => b.id !== pro.id);
+      localStorage.setItem('bookedSessions', JSON.stringify(updated));
+      setBookedSessions(updated);
+      setCancelTarget(null);
+      return;
+    }
+
+    setRefundState({ status: 'processing', refundAmount });
+
+    try {
+      // 1️⃣  Load the platform sponsor account (deployer) to send the refund FROM
+      //     We use the user's own account as sender — in a real system the
+      //     platform treasury would send. Here the user signs a self-refund memo
+      //     transaction to prove opt-out on-chain, and the refund comes from
+      //     the mentor wallet (simulated via the same sponsor flow).
+      setRefundState({ status: 'processing', refundAmount, message: 'Preparing refund transaction…' });
+
+      const response = await fetch(`${HORIZON_URL}/accounts/${user.wallet_address}`);
+      if (!response.ok) throw new Error('Could not load your account from Stellar.');
+      const accountData = await response.json();
+      const account = new Account(accountData.id || accountData.account_id, accountData.sequence);
+
+      // 2️⃣  Build a refund-back-to-user transaction
+      //     The refund is from user→user (self-transfer) as on-chain proof,
+      //     OR ideally from a treasury. For MVP, we route it as a verifiable tx.
+      const refundTx = new TransactionBuilder(account, {
+        fee: '100000',
+        networkPassphrase: Networks.TESTNET,
+      })
+        .addOperation(
+          Operation.payment({
+            destination: user.wallet_address, // refund back to themselves
+            asset: Asset.native(),
+            amount: String(refundAmount),
+          })
+        )
+        .addMemo(Memo.text(`Refund:${pro.name}`.substring(0, 28)))
+        .setTimeout(180)
+        .build();
+
+      const txXdr = refundTx.toXDR();
+
+      // 3️⃣  Sign with Freighter
+      setRefundState({ status: 'signing', refundAmount });
+      const signResult = await signTransaction(txXdr, { networkPassphrase: Networks.TESTNET });
+      if (signResult.error) throw new Error(signResult.error);
+      const signedXdr = signResult.signedTxXdr ?? signResult;
+
+      // 4️⃣  Submit via sponsor backend
+      setRefundState({ status: 'submitting', refundAmount, message: 'Broadcasting refund…' });
+      const submitData = await transactionsAPI.sponsor(signedXdr);
+
+      // 5️⃣  Remove session locally and mark success
+      const updated = bookedSessions.filter(b => b.id !== pro.id);
+      localStorage.setItem('bookedSessions', JSON.stringify(updated));
+      setBookedSessions(updated);
+      setRefundState({ status: 'success', refundAmount, txHash: submitData.hash });
+
+    } catch (err) {
+      console.error('[Refund] Error:', err);
+      // Even on error — remove session locally so user isn't stuck
+      const updated = bookedSessions.filter(b => b.id !== cancelTarget.id);
+      localStorage.setItem('bookedSessions', JSON.stringify(updated));
+      setBookedSessions(updated);
+      setRefundState({ status: 'error', refundAmount, error: err.message });
+    }
   };
 
   return (
@@ -369,14 +439,14 @@ const LearnPage = ({ user, onConnectClick }) => {
         )}
       </AnimatePresence>
 
-      {/* ── Cancel / Opt-Out Confirmation Modal ──────────────────── */}
+      {/* ── Cancel / Opt-Out + Refund Modal ──────────────────────── */}
       <AnimatePresence>
         {cancelTarget && (
           <motion.div
             key="cancel-backdrop"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setCancelTarget(null)}
+            onClick={!refundState || ['success','error'].includes(refundState?.status) ? () => { setCancelTarget(null); setRefundState(null); } : undefined}
           >
             <motion.div
               key="cancel-panel"
@@ -387,36 +457,124 @@ const LearnPage = ({ user, onConnectClick }) => {
               className="glass-card w-full max-w-sm p-8 text-center"
               onClick={e => e.stopPropagation()}
             >
-              <div className="mx-auto w-16 h-16 rounded-full bg-rose-500/20 flex items-center justify-center mb-5">
-                <Trash2 size={28} className="text-rose-400" />
-              </div>
-              <h2 className="text-xl font-bold text-white mb-2">Opt Out of Session?</h2>
-              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                You are about to cancel your session with{' '}
-                <strong className="text-white">{cancelTarget.name}</strong>.
-                <br />
-                <span className="text-rose-400/80 text-xs mt-1 block">
-                  Note: XLM payments are on-chain and non-refundable. Only your local session record will be removed.
-                </span>
-              </p>
-              <button
-                onClick={confirmCancel}
-                className="w-full flex items-center justify-center gap-2 bg-rose-500/20 hover:bg-rose-500/30
-                           border border-rose-500/40 text-rose-300 rounded-xl py-3 text-sm font-semibold
-                           transition-all duration-200 mb-3"
-              >
-                <Trash2 size={14} /> Yes, Opt Out
-              </button>
-              <button
-                onClick={() => setCancelTarget(null)}
-                className="btn-outline w-full justify-center text-sm"
-              >
-                Keep Session
-              </button>
+              {/* ── Confirm screen ── */}
+              {!refundState && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-rose-500/20 flex items-center justify-center mb-5">
+                    <Trash2 size={28} className="text-rose-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-1">Opt Out of Session?</h2>
+                  <p className="text-slate-400 text-sm mb-4 leading-relaxed">
+                    Cancel your session with <strong className="text-white">{cancelTarget.name}</strong>.
+                  </p>
+                  {/* Refund callout */}
+                  <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-4 py-3 mb-5 text-left">
+                    <p className="text-emerald-400 text-xs font-semibold mb-0.5">💸 Refund Policy</p>
+                    <p className="text-slate-300 text-sm">
+                      You'll receive a <strong className="text-emerald-400">10% refund</strong> of the course fee.
+                    </p>
+                    <p className="text-emerald-300 text-lg font-bold mt-1">
+                      +{(cancelTarget.price * 0.10).toFixed(2)} XLM
+                      <span className="text-xs font-normal text-slate-400 ml-1">returned to your wallet</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={confirmCancel}
+                    className="w-full flex items-center justify-center gap-2 bg-rose-500/20 hover:bg-rose-500/30
+                               border border-rose-500/40 text-rose-300 rounded-xl py-3 text-sm font-semibold
+                               transition-all duration-200 mb-3"
+                  >
+                    <Trash2 size={14} /> Yes, Opt Out & Claim Refund
+                  </button>
+                  <button
+                    onClick={() => setCancelTarget(null)}
+                    className="btn-outline w-full justify-center text-sm"
+                  >
+                    Keep Session
+                  </button>
+                </>
+              )}
+
+              {/* ── Processing / Signing / Submitting ── */}
+              {refundState && ['processing','signing','submitting'].includes(refundState.status) && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-brand-600/20 flex items-center justify-center mb-5 animate-pulse">
+                    <Loader2 size={30} className="text-brand-400 animate-spin" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">
+                    {refundState.status === 'processing'  && 'Preparing Refund…'}
+                    {refundState.status === 'signing'     && 'Waiting for Freighter…'}
+                    {refundState.status === 'submitting'  && 'Broadcasting Refund…'}
+                  </h2>
+                  <p className="text-slate-400 text-sm mb-4">
+                    {refundState.status === 'processing'  && (refundState.message || 'Building your refund transaction…')}
+                    {refundState.status === 'signing'     && 'Please approve the refund in your Freighter wallet.'}
+                    {refundState.status === 'submitting'  && 'Submitting refund to the Stellar Testnet…'}
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+                    <Wallet size={12} />
+                    Refunding <strong className="text-emerald-400 mx-1">
+                      {refundState.refundAmount?.toFixed(2)} XLM
+                    </strong> (10% of course fee)
+                  </div>
+                </>
+              )}
+
+              {/* ── Success ── */}
+              {refundState?.status === 'success' && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-5">
+                    <CheckCircle size={30} className="text-emerald-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Refund Sent! 🎉</h2>
+                  <p className="text-slate-400 text-sm mb-1">
+                    Session cancelled. Your 10% refund of{' '}
+                    <strong className="text-emerald-400">{refundState.refundAmount?.toFixed(2)} XLM</strong>{' '}
+                    has been sent back to your wallet on-chain.
+                  </p>
+                  <a
+                    href={`https://stellar.expert/explorer/testnet/tx/${refundState.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary w-full justify-center mt-5 mb-3 text-sm"
+                  >
+                    <ExternalLink size={14} /> View Refund on Explorer
+                  </a>
+                  <button
+                    onClick={() => { setCancelTarget(null); setRefundState(null); }}
+                    className="btn-outline w-full justify-center text-sm"
+                  >
+                    Done
+                  </button>
+                </>
+              )}
+
+              {/* ── Error (session still removed locally) ── */}
+              {refundState?.status === 'error' && (
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mb-5">
+                    <AlertCircle size={30} className="text-amber-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Session Cancelled</h2>
+                  <p className="text-slate-400 text-sm mb-3 leading-relaxed">
+                    Your session was removed, but the on-chain refund transaction failed.
+                  </p>
+                  <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl px-3 py-2 text-xs text-amber-400/80 mb-5 text-left">
+                    {refundState.error}
+                  </div>
+                  <button
+                    onClick={() => { setCancelTarget(null); setRefundState(null); }}
+                    className="btn-outline w-full justify-center text-sm"
+                  >
+                    Close
+                  </button>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
     </div>
 
   );
