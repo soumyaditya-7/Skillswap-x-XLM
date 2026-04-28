@@ -222,6 +222,8 @@ When a user opts out of a purchased session:
 
 The modal shows 4 live states: `Confirm → Processing → Signing → Success/Error`
 
+![Refund Completed](./screenshots/refund%20completed.png)
+
 Even if the refund TX fails, the session is removed locally so the user is never stuck.
 
 ---
@@ -417,5 +419,5 @@ Check the [issues page](https://github.com/soumyaditya-7/Skillswap-x-XLM/issues)
 ---
 
 <div align="center">
-<strong>Built with ❤️ on Stellar Soroban for the Stellar Black Belt Hackathon</strong>
+<strong>Built with ❤️ on Stellar Soroban for the Stellar </strong>
 </div>
